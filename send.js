@@ -28,7 +28,7 @@ var validateDkim = function () {
 
 var readLetter = function () {
     var deferred = Q.defer();
-    fs.readFile('/test.html', 'utf8', function (err, data) {
+    fs.readFile(__dirname + '/test.html', 'utf8', function (err, data) {
         if (err) {
             deferred.reject(err);
         } else {
