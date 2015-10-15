@@ -46,7 +46,7 @@ var copyInPostfix = function(){
                 deferred.resolve()
             } else {
 
-                deferred.reject('machine exist')
+                deferred.reject(stderr)
             }
         });
     return deferred.promise
