@@ -8,6 +8,8 @@ var cmd = require('child_process');
 var genrateKeyCommand = 'opendkim-genkey -s mail -d '
 var copyKeyCommand = 'cp mail.txt  /etc/postfix/dkim.key'
 
+var dkym = '/etc/postfix/dkim.key'
+
 var socket = '\nSOCKET="inet:12301@localhost"\n';
 var posfixMilter = '\n# DKIM\n' +
     'milter_protocol = 2\n' +
@@ -119,10 +121,24 @@ var copyInPostfix = function(hostname){
     return deferred.promise
 };
 
+var getDkym = function(){
+    var deferred = Q.defer();
+    readFile(dkym)
+        .then(function (data) {
+            data = data.replace(/^[^\(]+\(|\).+|\"/gi,'');
+            data = data.replace(/\s+/gi,' ');
+            deferred.resolve(data)
+        }, function (err) {
+            deferred.reject(stderr)
+        });
+    return deferred.promise
+};
+
 module.exports = {
     configPostfix: configPostfix,
     connectPostfixToMilter: connectPostfixToMilter,
     connectMilterToPostfix: connectMilterToPostfix,
     generateDkym: generateDkym,
-    copyInPostfix: copyInPostfix
+    copyInPostfix: copyInPostfix,
+    getDkym: getDkym
 }

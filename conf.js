@@ -53,6 +53,15 @@ app.get('/config', function (req, res) {
     });
 
 });
+app.get('/get-dkym', function (req, res) {
+    config.getDkym()
+        .then(function (data) {
+            res.send(data);
+        }, function (err) {
+            res.status(400).send(err);
+        })
+
+});
 var PORT = 8080;
 
 app.listen(PORT);
