@@ -81,13 +81,15 @@ var configPostfix = function (hostname) {
 
 
 app.use(bodyParser.json());
-//app.use(function(req, res, next) {
-//    res.header('Access-Control-Allow-Origin', '*');
-//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//    res.header('Access-Control-Allow-Headers', 'Content-Type');
-//
-//    next();
-//});
+
+
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+});
 
 app.get('/', function (req, res) {
     res.send('Hello world\n');
@@ -95,14 +97,19 @@ app.get('/', function (req, res) {
 
 app.post('/config-mailer', function (req, res) {
     console.log(req.body.hostname)
-    configPostfix(req.body.hostname)
-        .then(connectMilterToPostfix)
-        .then(connectPostfixToMilter)
-        .then(function () {
-            res.send('ok')
-        }, function (err) {
-            res.status(400).send(err)
-        })
+    if (!req.body.hostname){
+        res.status(400).send('hostname is empty')
+    } else {
+        configPostfix(req.body.hostname)
+            .then(connectMilterToPostfix)
+            .then(connectPostfixToMilter)
+            .then(function () {
+                res.send('ok')
+            }, function (err) {
+                res.status(400).send(err)
+            })
+    }
+
 });
 
 app.get('/config', function (req, res) {
