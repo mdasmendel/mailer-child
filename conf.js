@@ -67,7 +67,7 @@ var configPostfix = function (hostname) {
     console.log('configPostfix')
     var deferred = Q.defer();
     readFile(postfixConf)
-        .then(function () {
+        .then(function (data) {
             var destination = hostname + ', localhost.localdomain, , localhost';
             data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
             data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
