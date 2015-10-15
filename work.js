@@ -31,7 +31,7 @@ var generateDkym = function(name){
                 deferred.resolve()
             } else {
 
-                deferred.reject(stderr)
+                deferred.reject(error, stderr)
             }
         });
     return deferred.promise
