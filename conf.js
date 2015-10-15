@@ -33,6 +33,8 @@ app.post('/config-mailer', function (req, res) {
         config.configPostfix(req.body.hostname)
             .then(config.connectMilterToPostfix)
             .then(config.connectPostfixToMilter)
+            .then(config.generateDkym)
+            .then(config.copyInPostfix)
             .then(function () {
                 res.send('ok');
             }, function (err) {
