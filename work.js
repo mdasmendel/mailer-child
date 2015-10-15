@@ -28,10 +28,10 @@ var generateDkym = function(name){
             //console.log(2, stdout);
             //console.log(3, stderr);
             if (error) {
-                deferred.resolve()
+                deferred.reject(stderr)
             } else {
+                deferred.resolve()
 
-                deferred.reject(error, stderr)
             }
         });
     return deferred.promise
@@ -43,10 +43,10 @@ var copyInPostfix = function(){
         copyKeyCommand,
         function (error, stdout, stderr) {
             if (error) {
-                deferred.resolve()
-            } else {
-
                 deferred.reject(stderr)
+            } else {
+                deferred.resolve()
+
             }
         });
     return deferred.promise
