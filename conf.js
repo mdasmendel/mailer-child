@@ -50,6 +50,7 @@ var connectPostfixToMilter = function(){
 };
 
 var readFile = function(name){
+    console.log('readFile')
     var deferred = Q.defer();
     fs.readFile(name, 'utf8', function (err, data) {
         if (err) {
@@ -69,6 +70,7 @@ var configPostfix = function (hostname) {
             var destination = hostname + ', localhost.localdomain, , localhost';
             data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
             data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
+            console.log('write file')
             fs.writeFile(postfixConf, data, function(err) {
                 if(err) {
                     deferred.reject(err)
@@ -101,15 +103,15 @@ app.get('/', function (req, res) {
 app.post('/config-mailer', function (req, res) {
     console.log(req.body.hostname)
     if (!req.body.hostname){
-        res.status(400).send('hostname is empty')
+        res.status(400).send('hostname is empty');
     } else {
         configPostfix(req.body.hostname)
             .then(connectMilterToPostfix)
             .then(connectPostfixToMilter)
             .then(function () {
-                res.send('ok')
+                res.send('ok');
             }, function (err) {
-                res.status(400).send(err)
+                res.status(400).send(err);
             })
     }
 
