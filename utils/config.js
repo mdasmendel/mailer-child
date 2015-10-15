@@ -5,7 +5,7 @@ var fs = require('fs');
 var Q = require('q');
 var cmd = require('child_process');
 
-var genrateKeyCommand = 'opendkim-genkey -t -s mail -d '
+var genrateKeyCommand = 'opendkim-genkey -s mail -d '
 var copyKeyCommand = 'cp mail.txt  /etc/postfix/dkim.key'
 
 var socket = '\nSOCKET="inet:12301@localhost"\n';
