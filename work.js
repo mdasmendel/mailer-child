@@ -19,7 +19,7 @@ var readFile = function (name) {
 
 readFile(dkym)
     .then(function (data) {
-        data = data.match(/^[^\(]+\(| \).+$/)
+        data = data.replace(/^[^\(]+\(| \).+$/gi,'')
         console.log(data);
     }, function (err) {
         console.log(err);
