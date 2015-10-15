@@ -53,7 +53,7 @@ var readFile = function(name){
     console.log('readFile: ' + name);
     var deferred = Q.defer();
     fs.readFile(name, 'utf8', function (err, data) {
-        console.log('Readed : ' + name);
+        console.log('Readed : ' + JSON.stringify(err));
         if (err) {
             deferred.reject(err);
         } else {
