@@ -109,6 +109,8 @@ app.get('/config', function (req, res) {
     request.get('http://45.55.33.155/api/domain-name', function (error, response, body) {
         if (!error && response.statusCode == 200) {
             res.send(body);
+        } else {
+            res.status(400).send(error)
         }
     });
 
