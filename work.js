@@ -2,7 +2,7 @@ var fs = require('fs');
 var Q = require('q');
 var cmd = require('child_process');
 
-var genrateKeyCommand = 'sudo opendkim-genkey -t -s mail -d'
+var genrateKeyCommand = 'opendkim-genkey -t -s mail -d '
 var copyKeyCommand = 'cp mail.txt  /etc/postfix/dkim.key'
 
 
@@ -54,3 +54,8 @@ var copyInPostfix = function(){
 
 generateDkym('mailo')
 .then(copyInPostfix)
+.then(function () {
+        console.log('ok');
+    }, function (err) {
+        console.log(err);
+    })
