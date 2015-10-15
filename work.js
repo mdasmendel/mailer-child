@@ -4,7 +4,7 @@ var Q = require('q');
 var dkym = '/etc/postfix/dkim.key'
 
 
-var readFile = function(name){
+var readFile = function (name) {
     var deferred = Q.defer();
     fs.readFile(name, 'utf8', function (err, data) {
         if (err) {
@@ -17,4 +17,9 @@ var readFile = function(name){
 };
 
 
-readFile(dkym);
+readFile(dkym)
+    .then(function (data) {
+        console.log(data);
+    }, function (err) {
+        console.log(err);
+    });
