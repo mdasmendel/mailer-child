@@ -1,43 +1,10 @@
 var fs = require('fs');
 var Q = require('q');
+var cmd = require('child_process');
 
-var socket = 'SOCKET="inet:12301@localhost"\n';
-var posfixMilter = '# DKIM\n' +
-    'milter_protocol = 2\n' +
-    'milter_default_action = accept\n' +
-    'smtpd_milters = inet:localhost:12301\n' +
-    'non_smtpd_milters = inet:localhost:12301\n';
-var postfixConf = '/etc/postfix/main.cf';
-var milterConf = '/etc/default/opendkim';
+var genrateKeyCommand = 'sudo opendkim-genkey -t -s mail -d'
+var copyKeyCommand = 'cp mail.txt  /etc/postfix/dkim.key'
 
-var connectMilterToPostfix = function(){
-    var deferred = Q.defer();
-    fs.appendFile(milterConf, socket, function (err) {
-        if (err){
-            deferred.reject(err)
-        } else {
-            deferred.resolve()
-        }
-    });
-
-    return deferred.promise;
-
-};
-
-
-var connectPostfixToMilter = function(){
-    var deferred = Q.defer();
-    fs.appendFile(postfixConf, posfixMilter, function (err) {
-        if (err){
-            deferred.reject(err)
-        } else {
-            deferred.resolve()
-        }
-    });
-
-    return deferred.promise;
-
-};
 
 var readFile = function(name){
     var deferred = Q.defer();
@@ -51,24 +18,39 @@ var readFile = function(name){
     return deferred.promise
 };
 
-var configPostfix = function (hostname) {
+var generateDkym = function(name){
     var deferred = Q.defer();
-    readFile(postfixConf)
-        .then(function () {
-            var destination = hostname + ', localhost.localdomain, , localhost';
-            data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
-            data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
-            fs.writeFile(postfixConf, data, function(err) {
-                if(err) {
-                    deferred.reject(err)
-                } else {
-                    deferred.resolve()
-                }
-            });
-        }, function (err) {
-            deferred.reject(err)
+    cmd.exec(
+        genrateKeyCommand +
+        name,
+        function (error, stdout, stderr) {
+            //console.log(1,error);
+            //console.log(2, stdout);
+            //console.log(3, stderr);
+            if (error) {
+                deferred.resolve()
+            } else {
+
+                deferred.reject('machine exist')
+            }
         });
-    return deferred.promise;
+    return deferred.promise
 };
-readFile(postfixConf)
-    .then(changeConf)
+
+var copyInPostfix = function(){
+    var deferred = Q.defer();
+    cmd.exec(
+        copyKeyCommand,
+        function (error, stdout, stderr) {
+            if (error) {
+                deferred.resolve()
+            } else {
+
+                deferred.reject('machine exist')
+            }
+        });
+    return deferred.promise
+};
+
+generateDkym('mailo')
+.then(copyInPostfix)

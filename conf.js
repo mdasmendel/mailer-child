@@ -39,7 +39,6 @@ app.post('/config-mailer', function (req, res) {
                 res.status(400).send(err);
             })
     }
-
 });
 
 app.get('/config', function (req, res) {
