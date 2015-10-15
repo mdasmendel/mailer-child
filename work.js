@@ -52,7 +52,7 @@ var copyInPostfix = function(){
     return deferred.promise
 };
 
-generateDkym('mailo')
+generateDkym('mailo.com')
 .then(copyInPostfix)
 .then(function () {
         console.log('ok');
