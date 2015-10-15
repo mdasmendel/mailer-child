@@ -50,9 +50,10 @@ var connectPostfixToMilter = function(){
 };
 
 var readFile = function(name){
-    console.log('readFile')
+    console.log('readFile: ' + name);
     var deferred = Q.defer();
     fs.readFile(name, 'utf8', function (err, data) {
+        console.log('Readed : ' + name);
         if (err) {
             deferred.reject(err);
         } else {
@@ -72,6 +73,7 @@ var configPostfix = function (hostname) {
             data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
             console.log('write file')
             fs.writeFile(postfixConf, data, function(err) {
+                console.log('Writed : ' + name);
                 if(err) {
                     deferred.reject(err)
                 } else {
