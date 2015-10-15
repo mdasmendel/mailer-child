@@ -9,8 +9,8 @@ var Q = require('q');
 
 var app = express();
 
-var socket = 'SOCKET="inet:12301@localhost"\n';
-var posfixMilter = '# DKIM\n' +
+var socket = '\nSOCKET="inet:12301@localhost"\n';
+var posfixMilter = '\n# DKIM\n' +
     'milter_protocol = 2\n' +
     'milter_default_action = accept\n' +
     'smtpd_milters = inet:localhost:12301\n' +
