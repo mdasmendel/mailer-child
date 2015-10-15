@@ -19,6 +19,7 @@ var postfixConf = '/etc/postfix/main.cf';
 var milterConf = '/etc/default/opendkim';
 
 var connectMilterToPostfix = function(){
+    console.log('connectMilterToPostfix')
     var deferred = Q.defer();
     fs.appendFile(milterConf, socket, function (err) {
         if (err){
@@ -34,6 +35,7 @@ var connectMilterToPostfix = function(){
 
 
 var connectPostfixToMilter = function(){
+    console.log('connectPostfixToMilter')
     var deferred = Q.defer();
     fs.appendFile(postfixConf, posfixMilter, function (err) {
         if (err){
@@ -60,6 +62,7 @@ var readFile = function(name){
 };
 
 var configPostfix = function (hostname) {
+    console.log('configPostfix')
     var deferred = Q.defer();
     readFile(postfixConf)
         .then(function () {
