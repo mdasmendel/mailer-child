@@ -81,3 +81,9 @@ var configPostfix = function (hostname) {
         });
     return deferred.promise;
 };
+
+module.exports = {
+    configPostfix: configPostfix,
+    connectPostfixToMilter: connectPostfixToMilter,
+    connectMilterToPostfix: connectMilterToPostfix
+}
