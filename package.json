@@ -5,6 +5,7 @@
     "node": "0.10.x"
   },
   "dependencies": {
+    "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "fs": "0.0.2",
     "nodemailer": "^1.5.0",
