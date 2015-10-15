@@ -4,7 +4,7 @@
 var request = require('request');
 var express = require('express');
 var bodyParser = require('body-parser');
-var config = require(__dirname + 'utils/config');
+var config = require(__dirname + '/utils/config');
 
 var app = express();
 
