@@ -73,7 +73,7 @@ var configPostfix = function (hostname) {
             data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
             console.log('write file')
             fs.writeFile(postfixConf, data, function(err) {
-                console.log('Writed : ' + name);
+                console.log('Writed : ' + postfixConf);
                 if(err) {
                     deferred.reject(err)
                 } else {
