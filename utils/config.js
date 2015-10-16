@@ -16,6 +16,13 @@ var posfixMilter = '\n# DKIM\n' +
     'milter_default_action = accept\n' +
     'smtpd_milters = inet:localhost:12301\n' +
     'non_smtpd_milters = inet:localhost:12301\n';
+
+var posfixMilterArr =
+    ['milter_protocol = 2',
+        'milter_default_action = accept',
+        'smtpd_milters = inet:localhost:12301',
+        'non_smtpd_milters = inet:localhost:12301'];
+
 var postfixConf = '/etc/postfix/main.cf';
 var milterConf = '/etc/default/opendkim';
 
@@ -36,15 +43,28 @@ var connectMilterToPostfix = function(hostname){
 
 
 var connectPostfixToMilter = function(hostname){
-    console.log('connectPostfixToMilter')
+    console.log('connectPostfixToMilter');
     var deferred = Q.defer();
-    fs.appendFile(postfixConf, posfixMilter, function (err) {
-        if (err){
-            deferred.reject(err)
-        } else {
-            deferred.resolve(hostname)
-        }
-    });
+    cmd.exec(
+        posfixMilterArr,
+        function (error, stdout, stderr) {
+            //console.log(1,error);
+            //console.log(2, stdout);
+            //console.log(3, stderr);
+            if (error) {
+                deferred.reject(stderr)
+            } else {
+                deferred.resolve(hostname)
+
+            }
+        });
+    //fs.appendFile(postfixConf, posfixMilter, function (err) {
+    //    if (err){
+    //        deferred.reject(err)
+    //    } else {
+    //        deferred.resolve(hostname)
+    //    }
+    //});
 
     return deferred.promise;
 
