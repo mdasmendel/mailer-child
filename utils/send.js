@@ -22,7 +22,7 @@ var validateDkim = function (domainName) {
         if (err) {
             console.log('Verification failed');
             console.log(err);
-            deferred.reject(err);
+            deferred.reject(err[0]);
         } else if (success) {
             deferred.resolve(domainName);
 
