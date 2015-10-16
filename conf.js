@@ -5,6 +5,7 @@ var request = require('request');
 var express = require('express');
 var bodyParser = require('body-parser');
 var config = require(__dirname + '/utils/config');
+var send = require(__dirname + '/utils/send');
 
 var app = express();
 
@@ -23,6 +24,18 @@ app.use(function(req, res, next) {
 
 app.get('/', function (req, res) {
     res.send('Hello world\n');
+});
+
+app.post('/send-test', function (req, res) {
+    send.validateDkim()
+        .then(send.readLetter)
+        .then(send.sendEmail)
+        .then(function () {
+            res.send('sent')
+        }, function (err) {
+            res.status(400).send(err)
+        });
+
 });
 
 app.post('/config-mailer', function (req, res) {
