@@ -46,14 +46,20 @@ function execMultiple(commands, cb) {
 var connectMilterToPostfix = function (hostname) {
     console.log('connectMilterToPostfix')
     var deferred = Q.defer();
-    fs.appendFile(milterConf, socket, function (err) {
-        if (err) {
-            deferred.reject(err)
-        } else {
-            deferred.resolve(hostname)
-        }
-    });
+    readFile(milterConf)
+        .then(function (data) {
 
+            if (!data.match(/SOCKET="inet:12301@localhost"/)) {
+                fs.appendFile(milterConf, socket, function (err) {
+                    if (err) {
+                        deferred.reject(err)
+                    } else {
+                        deferred.resolve(hostname)
+                    }
+                });
+            }
+
+        });
     return deferred.promise;
 
 };
@@ -76,13 +82,6 @@ var connectPostfixToMilter = function (hostname) {
 
             }
         });
-    //fs.appendFile(postfixConf, posfixMilter, function (err) {
-    //    if (err){
-    //        deferred.reject(err)
-    //    } else {
-    //        deferred.resolve(hostname)
-    //    }
-    //});
 
     return deferred.promise;
 
@@ -120,23 +119,7 @@ var configPostfix = function (hostname) {
 
             }
         });
-    //readFile(postfixConf)
-    //    .then(function (data) {
-    //        var destination = hostname + ', localhost.localdomain, , localhost';
-    //        data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
-    //        data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
-    //        console.log('write file')
-    //        fs.writeFile(postfixConf, data, function (err) {
-    //            console.log('Writed : ' + postfixConf);
-    //            if (err) {
-    //                deferred.reject(err)
-    //            } else {
-    //                deferred.resolve(hostname)
-    //            }
-    //        });
-    //    }, function (err) {
-    //        deferred.reject(err)
-    //    });
+
     return deferred.promise;
 };
 
