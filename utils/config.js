@@ -57,6 +57,8 @@ var connectMilterToPostfix = function (hostname) {
                         deferred.resolve(hostname)
                     }
                 });
+            } else {
+                deferred.resolve(hostname)
             }
 
         });
