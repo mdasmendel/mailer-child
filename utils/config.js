@@ -106,8 +106,8 @@ var configPostfix = function (hostname) {
     console.log('configPostfix')
     var deferred = Q.defer();
     var commnads = [
-        'myhostname = ' + hostname,
-        hostname + ', localhost.localdomain, , localhost'
+        "postconf -e 'myhostname = "+ hostname + "'",
+        "postconf -e '" + hostname + ", localhost.localdomain, , localhost'"
     ];
 
     execMultiple(
