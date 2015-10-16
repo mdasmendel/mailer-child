@@ -13,6 +13,7 @@ var hbs = require('nodemailer-express-handlebars');
 
 var validateDkim = function (domainName) {
     var deferred = Q.defer();
+    console.log(domainName)
     dkim.verifyKeys({
         domainName: domainName,
         keySelector: 'mail',
