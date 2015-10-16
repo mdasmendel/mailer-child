@@ -10,19 +10,20 @@ var htmlToText = require('nodemailer-html-to-text').htmlToText;
 var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
 
+var dkimKeySelector = 'mailo'
 
 var validateDkim = function (domainName) {
     var deferred = Q.defer();
     console.log(domainName)
     dkim.verifyKeys({
         domainName: domainName,
-        keySelector: 'mailo',
+        keySelector: dkimKeySelector,
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     }, function (err, success) {
         if (err) {
             console.log('Verification failed');
             console.log(err);
-            deferred.reject(err.toString());
+            deferred.reject(err.toString() + dkimKeySelector);
         } else if (success) {
             deferred.resolve(domainName);
 
@@ -47,7 +48,7 @@ var sendEmail = function (hostname) {
     var deferred = Q.defer();
     var optionsSigner = {
         domainName: hostname,
-        keySelector: 'mailo',
+        keySelector: dkimKeySelector,
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     };
 
