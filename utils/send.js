@@ -59,7 +59,7 @@ var sendEmail = function (hostname) {
     };
 
     var optionsEmail = {
-        from: 'kligler.j@emarketing-uk.com',
+        from: 'kligler.j@' + hostname,
         to: 'dascal.mi@gmail.com',
         subject: 'Action required - You\'ve reached your Mailgun email limit',
         template: 'test',
@@ -70,7 +70,7 @@ var sendEmail = function (hostname) {
 
     var transporter = nodemailer.createTransport();
 
-    transporter.use('stream', dkim.signer(optionsSigner));
+    //transporter.use('stream', dkim.signer(optionsSigner));
 
     transporter.use('compile', hbs(optionsHbs));
 
