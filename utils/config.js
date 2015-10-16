@@ -18,16 +18,19 @@ var posfixMilter = '\n# DKIM\n' +
     'non_smtpd_milters = inet:localhost:12301\n';
 
 var posfixMilterArr =
-    "postconf -e 'milter_protocol = 2'";
+    ["postconf -e 'milter_protocol = 2'",
+        "postconf -e 'milter_default_action = accept'",
+        "postconf -e 'smtpd_milters = inet:localhost:12301'",
+        "postconf -e 'non_smtpd_milters = inet:localhost:12301'"];
 
 var postfixConf = '/etc/postfix/main.cf';
 var milterConf = '/etc/default/opendkim';
 
-var connectMilterToPostfix = function(hostname){
+var connectMilterToPostfix = function (hostname) {
     console.log('connectMilterToPostfix')
     var deferred = Q.defer();
     fs.appendFile(milterConf, socket, function (err) {
-        if (err){
+        if (err) {
             deferred.reject(err)
         } else {
             deferred.resolve(hostname)
@@ -38,18 +41,37 @@ var connectMilterToPostfix = function(hostname){
 
 };
 
+function execMultiple(commands, cb) {
+    if (commands.length > 0) {
+        cmd.exec(
+            commands[0],
+            function (error, stdout, stderr) {
+                //console.log(1,error);
+                //console.log(2, stdout);
+                //console.log(3, stderr);
+                if (error) {
+                    cb(stderr)
+                } else {
+                    commands.shift();
+                    execMultiple(commands, cb)
+                }
+            });
+    } else {
+        cb(0)
+    }
+}
 
-var connectPostfixToMilter = function(hostname){
+var connectPostfixToMilter = function (hostname) {
     console.log('connectPostfixToMilter');
     var deferred = Q.defer();
-    cmd.exec(
+    execMultiple(
         posfixMilterArr,
-        function (error, stdout, stderr) {
+        function (error) {
             //console.log(1,error);
             //console.log(2, stdout);
             //console.log(3, stderr);
             if (error) {
-                deferred.reject(stderr)
+                deferred.reject(error)
             } else {
                 deferred.resolve(hostname)
 
@@ -67,7 +89,7 @@ var connectPostfixToMilter = function(hostname){
 
 };
 
-var readFile = function(name){
+var readFile = function (name) {
     console.log('readFile: ' + name);
     var deferred = Q.defer();
     fs.readFile(name, 'utf8', function (err, data) {
@@ -90,9 +112,9 @@ var configPostfix = function (hostname) {
             data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
             data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
             console.log('write file')
-            fs.writeFile(postfixConf, data, function(err) {
+            fs.writeFile(postfixConf, data, function (err) {
                 console.log('Writed : ' + postfixConf);
-                if(err) {
+                if (err) {
                     deferred.reject(err)
                 } else {
                     deferred.resolve(hostname)
@@ -104,7 +126,7 @@ var configPostfix = function (hostname) {
     return deferred.promise;
 };
 
-var generateDkym = function(hostname){
+var generateDkym = function (hostname) {
     var deferred = Q.defer();
     cmd.exec(
         genrateKeyCommand +
@@ -123,7 +145,7 @@ var generateDkym = function(hostname){
     return deferred.promise
 };
 
-var copyInPostfix = function(hostname){
+var copyInPostfix = function (hostname) {
     var deferred = Q.defer();
     cmd.exec(
         copyKeyCommand,
@@ -138,12 +160,12 @@ var copyInPostfix = function(hostname){
     return deferred.promise
 };
 
-var getDkym = function(){
+var getDkym = function () {
     var deferred = Q.defer();
     readFile(dkym)
         .then(function (data) {
-            data = data.replace(/^[^\(]+\(|\).+|\"/gi,'');
-            data = data.replace(/\s+/gi,' ');
+            data = data.replace(/^[^\(]+\(|\).+|\"/gi, '');
+            data = data.replace(/\s+/gi, ' ');
             deferred.resolve(data)
         }, function (err) {
             deferred.reject(stderr)
