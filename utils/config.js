@@ -6,7 +6,7 @@ var Q = require('q');
 var cmd = require('child_process');
 
 var genrateKeyCommand = 'opendkim-genkey -s mailo -d '
-var copyKeyCommand = 'cp mail.txt  /etc/postfix/dkim.key'
+var copyKeyCommand = 'cp mailo.txt  /etc/postfix/dkim.key'
 
 var dkym = '/etc/postfix/dkim.key'
 
