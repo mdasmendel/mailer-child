@@ -10,11 +10,11 @@ var htmlToText = require('nodemailer-html-to-text').htmlToText;
 var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
 
-var dkimKeySelector = 'mailo'
+var dkimKeySelector = 'mailo';
 
 var validateDkim = function (domainName) {
     var deferred = Q.defer();
-    console.log(domainName)
+    console.log(domainName);
     dkim.verifyKeys({
         domainName: domainName,
         keySelector: dkimKeySelector,
@@ -70,7 +70,7 @@ var sendEmail = function (hostname) {
 
     var transporter = nodemailer.createTransport();
 
-    //transporter.use('stream', dkim.signer(optionsSigner));
+    transporter.use('stream', dkim.signer(optionsSigner));
 
     transporter.use('compile', hbs(optionsHbs));
 
