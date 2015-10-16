@@ -48,7 +48,7 @@ var sendEmail = function () {
 
     var optionsHbs = {
         'viewEngine': '.html',
-        'viewPath': '/',
+        'viewPath': __dirname + '/',
         'extName': '.html'
     };
 
