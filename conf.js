@@ -33,6 +33,7 @@ app.post('/send-test', function (req, res) {
         res.status(400).send('hostname is empty');
     } else {
         send.validateDkim(hostname)
+            .then(send.validateDkim)
             .then(send.sendEmail)
             .then(function () {
                 res.send('sent')

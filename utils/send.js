@@ -13,21 +13,21 @@ var hbs = require('nodemailer-express-handlebars');
 
 var validateDkim = function (domainName) {
     var deferred = Q.defer();
-    //console.log(domainName)
-    //dkim.verifyKeys({
-    //    domainName: domainName,
-    //    keySelector: 'mail',
-    //    privateKey: fs.readFileSync('/etc/postfix/dkim.key')
-    //}, function (err, success) {
-    //    if (err) {
-    //        console.log('Verification failed');
-    //        console.log(err)
-    //        deferred.reject(err);
-    //    } else if (success) {
+    console.log(domainName)
+    dkim.verifyKeys({
+        domainName: domainName,
+        keySelector: 'mail',
+        privateKey: fs.readFileSync('/etc/postfix/dkim.key')
+    }, function (err, success) {
+        if (err) {
+            console.log('Verification failed');
+            console.log(err)
+            deferred.reject(err);
+        } else if (success) {
             deferred.resolve(domainName);
 
-    //    }
-    //});
+        }
+    });
     return deferred.promise
 };
 
