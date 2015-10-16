@@ -18,7 +18,7 @@ var posfixMilter = '\n# DKIM\n' +
     'non_smtpd_milters = inet:localhost:12301\n';
 
 var posfixMilterArr =
-    ["sudo postconf -e 'milter_protocol = 2'",
+    ["postconf -e 'milter_protocol = 2'",
         "sudo postconf -e 'milter_default_action = accept'",
         "sudo postconf -e 'smtpd_milters = inet:localhost:12301'",
         "sudo postconf -e 'non_smtpd_milters = inet:localhost:12301'"];
