@@ -27,14 +27,19 @@ app.get('/', function (req, res) {
 });
 
 app.post('/send-test', function (req, res) {
-    send.validateDkim()
-        .then(send.readLetter)
-        .then(send.sendEmail)
-        .then(function () {
-            res.send('sent')
-        }, function (err) {
-            res.status(400).send(err)
-        });
+    console.log(req.body.hostname)
+    if (!req.body.hostname){
+        res.status(400).send('hostname is empty');
+    } else {
+        send.validateDkim(req.body.hostname)
+            .then(send.readLetter)
+            .then(send.sendEmail)
+            .then(function () {
+                res.send('sent')
+            }, function (err) {
+                res.status(400).send(err)
+            });
+    }
 
 });
 
