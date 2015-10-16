@@ -32,9 +32,9 @@ app.post('/send-test', function (req, res) {
     if (!hostname){
         res.status(400).send('hostname is empty');
     } else {
-        send.validateDkim(hostname)
-            .then(send.validateDkim)
-            .then(send.sendEmail)
+        send.sendEmail(hostname)
+            //.then(send.validateDkim)
+            //.then(send.sendEmail)
             .then(function () {
                 res.send('sent')
             }, function (err) {
