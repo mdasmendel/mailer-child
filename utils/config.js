@@ -110,7 +110,6 @@ var configPostfix = function (hostname) {
         hostname + ', localhost.localdomain, , localhost'
     ];
 
-    execMultiple(commnads);
     execMultiple(
         commnads,
         function (error) {
