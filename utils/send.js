@@ -22,7 +22,7 @@ var validateDkim = function (domainName) {
         if (err) {
             console.log('Verification failed');
             console.log(err);
-            deferred.reject(err[0]);
+            deferred.reject(err);
         } else if (success) {
             deferred.resolve(domainName);
 
@@ -44,7 +44,7 @@ var readLetter = function (domainName) {
 };
 
 var sendEmail = function (hostname) {
-
+    var deferred = Q.defer();
     var optionsSigner = {
         domainName: hostname,
         keySelector: 'mail',
@@ -75,7 +75,14 @@ var sendEmail = function (hostname) {
 
     transporter.use('compile', htmlToText());
 
-    transporter.sendMail(optionsEmail);
+    transporter.sendMail(optionsEmail, function(err){
+        if(err){
+            deferred.reject(err);
+        } else {
+            deferred.resolve(hostname);
+        }
+    });
+    return deferred.promise
 };
 
 module.exports = {
