@@ -16,7 +16,7 @@ var validateDkim = function (domainName) {
     console.log(domainName)
     dkim.verifyKeys({
         domainName: domainName,
-        keySelector: 'mail',
+        keySelector: 'mailo',
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     }, function (err, success) {
         if (err) {
@@ -47,7 +47,7 @@ var sendEmail = function (hostname) {
     var deferred = Q.defer();
     var optionsSigner = {
         domainName: hostname,
-        keySelector: 'mail',
+        keySelector: 'mailo',
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     };
 
