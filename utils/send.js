@@ -20,31 +20,32 @@ var validateDkim = function (domainName) {
     }, function (err, success) {
         if (err) {
             console.log('Verification failed');
+            console.log(err)
             deferred.reject(err);
         } else if (success) {
-    deferred.resolve(domainName);
+            deferred.resolve(domainName);
 
-    }
-    });
-    return deferred.promise
-};
-
-var readLetter = function (domainName) {
-    var deferred = Q.defer();
-    fs.readFile(__dirname + '/test.html', 'utf8', function (err, data) {
-        if (err) {
-            deferred.reject(err);
-        } else {
-            deferred.resolve({letter: data, domainName:domainName})
         }
     });
     return deferred.promise
 };
 
-var sendEmail = function (data) {
+//var readLetter = function (domainName) {
+//    var deferred = Q.defer();
+//    fs.readFile(__dirname + '/test.html', 'utf8', function (err, data) {
+//        if (err) {
+//            deferred.reject(err);
+//        } else {
+//            deferred.resolve({letter: data, domainName: domainName})
+//        }
+//    });
+//    return deferred.promise
+//};
+
+var sendEmail = function (hostname) {
 
     var optionsSigner = {
-        domainName: data.domainName,
+        domainName: hostname,
         keySelector: 'mail',
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     };

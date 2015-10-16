@@ -27,12 +27,12 @@ app.get('/', function (req, res) {
 });
 
 app.post('/send-test', function (req, res) {
-    console.log(req.body.hostname)
-    if (!req.body.hostname){
+    var hostname = req.body.hostname;
+    console.log(hostname);
+    if (!hostname){
         res.status(400).send('hostname is empty');
     } else {
-        send.validateDkim(req.body.hostname)
-            .then(send.readLetter)
+        send.validateDkim(hostname)
             .then(send.sendEmail)
             .then(function () {
                 res.send('sent')
