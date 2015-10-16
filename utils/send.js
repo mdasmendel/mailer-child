@@ -11,40 +11,40 @@ var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
 
 
-var validateDkim = function () {
+var validateDkim = function (domainName) {
     var deferred = Q.defer();
-    //dkim.verifyKeys({
-    //    domainName: 'emarketing-uk.com',
-    //    keySelector: 'mail',
-    //    privateKey: fs.readFileSync('/etc/postfix/dkim.key')
-    //}, function (err, success) {
-    //    if (err) {
-    //        console.log('Verification failed');
-    //        deferred.reject(err);
-    //    } else if (success) {
-    deferred.resolve();
+    dkim.verifyKeys({
+        domainName: domainName,
+        keySelector: 'mail',
+        privateKey: fs.readFileSync('/etc/postfix/dkim.key')
+    }, function (err, success) {
+        if (err) {
+            console.log('Verification failed');
+            deferred.reject(err);
+        } else if (success) {
+    deferred.resolve(domainName);
 
-    //}
-    //});
+    }
+    });
     return deferred.promise
 };
 
-var readLetter = function () {
+var readLetter = function (domainName) {
     var deferred = Q.defer();
     fs.readFile(__dirname + '/test.html', 'utf8', function (err, data) {
         if (err) {
             deferred.reject(err);
         } else {
-            deferred.resolve(data)
+            deferred.resolve({letter: data, domainName:domainName})
         }
     });
     return deferred.promise
 };
 
-var sendEmail = function () {
+var sendEmail = function (data) {
 
     var optionsSigner = {
-        domainName: 'emarketing-uk.com',
+        domainName: data.domainName,
         keySelector: 'mail',
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     };
@@ -67,7 +67,7 @@ var sendEmail = function () {
 
     var transporter = nodemailer.createTransport();
 
-    //transporter.use('stream', dkim.signer(optionsSigner));
+    transporter.use('stream', dkim.signer(optionsSigner));
 
     transporter.use('compile', hbs(optionsHbs));
 
