@@ -26,6 +26,23 @@ var posfixMilterArr =
 var postfixConf = '/etc/postfix/main.cf';
 var milterConf = '/etc/default/opendkim';
 
+function execMultiple(commands, cb) {
+    if (commands.length > 0) {
+        cmd.exec(
+            commands[0],
+            function (error, stdout, stderr) {
+                if (error) {
+                    cb(stderr)
+                } else {
+                    commands.shift();
+                    execMultiple(commands, cb)
+                }
+            });
+    } else {
+        cb(0)
+    }
+}
+
 var connectMilterToPostfix = function (hostname) {
     console.log('connectMilterToPostfix')
     var deferred = Q.defer();
@@ -41,25 +58,7 @@ var connectMilterToPostfix = function (hostname) {
 
 };
 
-function execMultiple(commands, cb) {
-    if (commands.length > 0) {
-        cmd.exec(
-            commands[0],
-            function (error, stdout, stderr) {
-                //console.log(1,error);
-                //console.log(2, stdout);
-                //console.log(3, stderr);
-                if (error) {
-                    cb(stderr)
-                } else {
-                    commands.shift();
-                    execMultiple(commands, cb)
-                }
-            });
-    } else {
-        cb(0)
-    }
-}
+
 
 var connectPostfixToMilter = function (hostname) {
     console.log('connectPostfixToMilter');
@@ -106,23 +105,39 @@ var readFile = function (name) {
 var configPostfix = function (hostname) {
     console.log('configPostfix')
     var deferred = Q.defer();
-    readFile(postfixConf)
-        .then(function (data) {
-            var destination = hostname + ', localhost.localdomain, , localhost';
-            data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
-            data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
-            console.log('write file')
-            fs.writeFile(postfixConf, data, function (err) {
-                console.log('Writed : ' + postfixConf);
-                if (err) {
-                    deferred.reject(err)
-                } else {
-                    deferred.resolve(hostname)
-                }
-            });
-        }, function (err) {
-            deferred.reject(err)
+    var commnads = [
+        'myhostname = ' + hostname,
+        hostname + ', localhost.localdomain, , localhost'
+    ];
+
+    execMultiple(commnads);
+    execMultiple(
+        commnads,
+        function (error) {
+            if (error) {
+                deferred.reject(error)
+            } else {
+                deferred.resolve(hostname)
+
+            }
         });
+    //readFile(postfixConf)
+    //    .then(function (data) {
+    //        var destination = hostname + ', localhost.localdomain, , localhost';
+    //        data = data.replace(/myhostname = [^\n]+/gi, 'myhostname = ' + hostname);
+    //        data = data.replace(/mydestination = [^\n]+/gi, 'mydestination = ' + destination);
+    //        console.log('write file')
+    //        fs.writeFile(postfixConf, data, function (err) {
+    //            console.log('Writed : ' + postfixConf);
+    //            if (err) {
+    //                deferred.reject(err)
+    //            } else {
+    //                deferred.resolve(hostname)
+    //            }
+    //        });
+    //    }, function (err) {
+    //        deferred.reject(err)
+    //    });
     return deferred.promise;
 };
 
