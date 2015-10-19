@@ -27,7 +27,7 @@ var validateDkim = function (domainName) {
             errContent += 'dkim key: ' + dkimKeySelector + '\n';
             errContent += 'host name: ' + domainName + '\n';
             errContent += fs.readFileSync('/etc/postfix/dkim.key') + '\n';
-            deferred.reject(err.toString() + '; dkim key: ' + dkimKeySelector);
+            deferred.reject(errContent);
         } else if (success) {
             deferred.resolve(domainName);
 
