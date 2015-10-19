@@ -28,7 +28,7 @@ app.get('/', function (req, res) {
 
 app.post('/send-test', function (req, res) {
     var hostname = req.body.hostname;
-    var checkDkim = req.body.check-dkim;
+    var checkDkim = req.body.checkDkim;
     console.log(hostname);
     if (!hostname){
         res.status(400).send('hostname is empty');
