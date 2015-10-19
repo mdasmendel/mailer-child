@@ -163,8 +163,8 @@ var getDkym = function () {
     var deferred = Q.defer();
     readFile(dkym)
         .then(function (data) {
-            data = data.replace(/^[^\(]+\(|\).+|\"/gi, '');
-            data = data.replace(/\s+/gi, ' ');
+            //data = data.replace(/^[^\(]+\(|\).+|\"/gi, '');
+            //data = data.replace(/\s+/gi, ' ');
             deferred.resolve(data)
         }, function (err) {
             deferred.reject(stderr)
