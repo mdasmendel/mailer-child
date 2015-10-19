@@ -28,18 +28,28 @@ app.get('/', function (req, res) {
 
 app.post('/send-test', function (req, res) {
     var hostname = req.body.hostname;
+    var checkDkim = req.body.check-dkim;
     console.log(hostname);
     if (!hostname){
         res.status(400).send('hostname is empty');
     } else {
-        //send.sendEmail(hostname)
+        if(checkDkim){
             send.validateDkim(hostname)
-            .then(send.sendEmail)
-            .then(function () {
-                res.send('sent')
-            }, function (err) {
-                res.status(400).send(err)
-            });
+                .then(send.sendEmail)
+                .then(function () {
+                    res.send('sent')
+                }, function (err) {
+                    res.status(400).send(err)
+                });
+        } else {
+            send.sendEmail(hostname)
+                .then(function () {
+                    res.send('sent')
+                }, function (err) {
+                    res.status(400).send(err)
+                });
+        }
+
     }
 
 });
