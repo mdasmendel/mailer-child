@@ -104,7 +104,7 @@ var sendEmail = function (hostname, message) {
         'extName': '.html'
     };
 
-    var template = hbs.compile(message.html);
+    var template = hbs._compileTemplate(message.html);
 
     var optionsEmail = {
         from: message.from,
