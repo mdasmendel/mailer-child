@@ -118,7 +118,7 @@ var sendEmail = function (hostname, message) {
 
     transporter.use('stream', dkim.signer(optionsSigner));
 
-    transporter.use('compile', hbs(optionsHbs));
+    //transporter.use('compile', hbs(optionsHbs));
 
     transporter.use('compile', htmlToText());
 
