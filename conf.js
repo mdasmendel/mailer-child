@@ -10,14 +10,13 @@ var send = require(__dirname + '/utils/send');
 var app = express();
 
 
-
 app.use(bodyParser.json());
 
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     next();
 });
@@ -30,19 +29,19 @@ app.post('/send-test', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
     console.log(hostname);
-    if (!hostname){
+    if (!hostname) {
         res.status(400).send('hostname is empty');
     } else {
-        if(checkDkim){
+        if (checkDkim) {
             send.validateDkim(hostname)
-                .then(send.sendEmail)
+                .then(send.sendTestEmail)
                 .then(function () {
                     res.send('sent')
                 }, function (err) {
                     res.status(400).send(err)
                 });
         } else {
-            send.sendEmail(hostname)
+            send.sendTestEmail(hostname)
                 .then(function () {
                     res.send('sent')
                 }, function (err) {
@@ -54,9 +53,29 @@ app.post('/send-test', function (req, res) {
 
 });
 
+app.post('/send-message', function (req, res) {
+    var hostname = req.body.hostname;
+    var checkDkim = req.body.checkDkim;
+    var message = req.body.message;
+    console.log(req.body);
+    if (!hostname) {
+        res.status(400).send('hostname is empty');
+    } else {
+        send.sendEmail(hostname, message)
+            .then(function () {
+                res.send('sent')
+            }, function (err) {
+                res.status(400).send(err)
+            });
+
+
+    }
+
+});
+
 app.post('/config-mailer', function (req, res) {
     console.log(req.body.hostname)
-    if (!req.body.hostname){
+    if (!req.body.hostname) {
         res.status(400).send('hostname is empty');
     } else {
         config.configPostfix(req.body.hostname)

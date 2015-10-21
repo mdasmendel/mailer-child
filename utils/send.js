@@ -10,7 +10,7 @@ var htmlToText = require('nodemailer-html-to-text').htmlToText;
 var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
 
-var dkimKeySelector = 'mailo';
+var dkimKeySelector = 'mail';
 
 var validateDkim = function (domainName) {
     var deferred = Q.defer();
@@ -48,7 +48,7 @@ var readLetter = function (domainName) {
     return deferred.promise
 };
 
-var sendEmail = function (hostname) {
+var sendTestEmail = function (hostname) {
     var deferred = Q.defer();
     var optionsSigner = {
         domainName: hostname,
@@ -90,9 +90,53 @@ var sendEmail = function (hostname) {
     return deferred.promise
 };
 
+var sendEmail = function (hostname, message) {
+    var deferred = Q.defer();
+    var optionsSigner = {
+        domainName: hostname,
+        keySelector: dkimKeySelector,
+        privateKey: fs.readFileSync('/etc/postfix/dkim.key')
+    };
+
+    var optionsHbs = {
+        'viewEngine': '.html',
+        'viewPath': __dirname + '/',
+        'extName': '.html'
+    };
+
+    var template = hbs.compile(message.html);
+
+    var optionsEmail = {
+        from: message.from,
+        to: message.to,
+        subject: message.subject,
+        template: template,
+        context: message.vars
+    };
+
+    var transporter = nodemailer.createTransport();
+
+    transporter.use('stream', dkim.signer(optionsSigner));
+
+    transporter.use('compile', hbs(optionsHbs));
+
+    transporter.use('compile', htmlToText());
+
+    transporter.sendMail(optionsEmail, function(err){
+        if(err){
+            deferred.reject(err);
+        } else {
+            deferred.resolve(hostname);
+        }
+    });
+    return deferred.promise
+};
+
+
 module.exports = {
     validateDkim: validateDkim,
     readLetter: readLetter,
+    sendTestEmail: sendTestEmail,
     sendEmail: sendEmail
 };
 

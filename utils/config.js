@@ -5,10 +5,10 @@ var fs = require('fs');
 var Q = require('q');
 var cmd = require('child_process');
 
-var genrateKeyCommand = 'opendkim-genkey -s mailo -d ';
-var copyKeyCommand = 'cp mailo.private  /etc/postfix/dkim.key';
+var genrateKeyCommand = 'opendkim-genkey -s mail -d ';
+var copyKeyCommand = 'cp mail.private  /etc/postfix/dkim.key';
 
-var dkym = 'mailo.txt';
+var dkym = 'mail.txt';
 
 var socket = '\nSOCKET="inet:12301@localhost"\n';
 var posfixMilter = '\n# DKIM\n' +
