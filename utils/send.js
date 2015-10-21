@@ -110,7 +110,7 @@ var sendEmail = function (hostname, message) {
         from: message.from,
         to: message.to,
         subject: message.subject,
-        template: template,
+        html: template,
         context: message.vars
     };
 
