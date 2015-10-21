@@ -110,8 +110,7 @@ var sendEmail = function (hostname, message) {
         from: message.from,
         to: message.to,
         subject: message.subject,
-        html: template,
-        context: message.vars
+        html: template
     };
 
     var transporter = nodemailer.createTransport();
@@ -120,7 +119,7 @@ var sendEmail = function (hostname, message) {
 
     //transporter.use('compile', hbs(optionsHbs));
 
-    transporter.use('compile', htmlToText());
+    //transporter.use('compile', htmlToText());
 
     transporter.sendMail(optionsEmail, function(err){
         if(err){
