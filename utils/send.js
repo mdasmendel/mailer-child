@@ -9,6 +9,7 @@ var nodemailer = require('nodemailer');
 var htmlToText = require('nodemailer-html-to-text').htmlToText;
 var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
+var compileString = require(__dirname + '/../compile-string');
 
 var dkimKeySelector = 'mail';
 
@@ -104,13 +105,13 @@ var sendEmail = function (hostname, message) {
         'extName': '.html'
     };
 
-    //var template = hbs.compile(message.html);
+    var html = compileString(message.html, message.vars);
 
     var optionsEmail = {
         from: message.from,
         to: message.to,
         subject: message.subject,
-        html: message.html
+        html: html
     };
 
     var transporter = nodemailer.createTransport();
