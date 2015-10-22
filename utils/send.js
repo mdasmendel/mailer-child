@@ -92,6 +92,7 @@ var sendTestEmail = function (hostname) {
 };
 
 var sendEmail = function (hostname, message) {
+
     var deferred = Q.defer();
     var optionsSigner = {
         domainName: hostname,
@@ -99,26 +100,19 @@ var sendEmail = function (hostname, message) {
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     };
 
-    var optionsHbs = {
-        'viewEngine': '.html',
-        'viewPath': __dirname + '/',
-        'extName': '.html'
-    };
-
     var html = compileString(message.html, message.vars);
+    var subject = compileString(message.subject, message.vars);
 
     var optionsEmail = {
         from: message.from,
         to: message.to,
-        subject: message.subject,
+        subject: subject,
         html: html
     };
 
     var transporter = nodemailer.createTransport();
 
     transporter.use('stream', dkim.signer(optionsSigner));
-
-    //transporter.use('compile', hbs(optionsHbs));
 
     transporter.use('compile', htmlToText());
 
