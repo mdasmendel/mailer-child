@@ -1,7 +1,7 @@
 /**
  * Created by Mihai on 22.10.2015.
  */
-var nargs = /%recipient.([0-9a-zA-Z]+)%/g;
+var nargs = /\%recipient.([0-9a-zA-Z]+)\%/g;
 
 module.exports = template;
 
