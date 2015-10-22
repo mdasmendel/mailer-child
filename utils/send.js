@@ -110,7 +110,7 @@ var sendEmail = function (hostname, message) {
         from: message.from,
         to: message.to,
         subject: message.subject,
-        html: template
+        html: message.html
     };
 
     var transporter = nodemailer.createTransport();
