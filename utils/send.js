@@ -120,7 +120,7 @@ var sendEmail = function (hostname, message) {
 
     //transporter.use('compile', hbs(optionsHbs));
 
-    //transporter.use('compile', htmlToText());
+    transporter.use('compile', htmlToText());
 
     transporter.sendMail(optionsEmail, function(err){
         if(err){
