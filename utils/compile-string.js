@@ -1,6 +1,4 @@
-/**
- * Created by Mihai on 23.10.2015.
- */
+
 /**
  * Created by Mihai on 23.10.2015.
  */
