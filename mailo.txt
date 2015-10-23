@@ -1,0 +1,2 @@
+mailo._domainkey	IN	TXT	( "v=DKIM1; k=rsa; "
+	  "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7/z6cpM5jIyyznIdzLwLpCNVxK1+yYKMgGcuOP8pfmX0oHGukNCZX+pBITGIDHPiCuQbUaxpOF6oCd/mpsTpq7w7XIHxqfHWZYToIvRh46GaJ0AB+YtI7gCbahSc1iVfamZUS0a05BIAJxsQQTFhD/l392u7HmDe6AY6GojZovQIDAQAB" )  ; ----- DKIM key mailo for emarketing-uk.com
