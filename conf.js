@@ -63,12 +63,10 @@ app.post('/send-message', function (req, res) {
     } else {
         send.sendEmail(hostname, message)
             .then(function () {
-                res.send('sent')
+                res.status(200).send('sent')
             }, function (err) {
                 res.status(400).send(err)
             });
-
-
     }
 
 });
