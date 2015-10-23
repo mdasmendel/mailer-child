@@ -72,7 +72,7 @@ app.post('/send-message', function (req, res) {
 });
 
 app.post('/config-mailer', function (req, res) {
-    console.log(req.body.hostname)
+    console.log(req.body.hostname);
     if (!req.body.hostname) {
         res.status(400).send('hostname is empty');
     } else {

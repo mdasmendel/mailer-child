@@ -100,7 +100,7 @@ var sendEmail = function (hostname, message) {
         privateKey: fs.readFileSync('/etc/postfix/dkim.key')
     };
 
-    var html = compileString(message.html, message.vars);
+    var html = compileString(message.html, message.vars[message.to]);
     //var subject = compileString(message.subject, message.vars);
 
     var optionsEmail = {
