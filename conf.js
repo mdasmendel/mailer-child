@@ -57,7 +57,7 @@ app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
-    console.log(req.body);
+    //console.log(req.body);
     if (!hostname) {
         res.status(400).send('hostname is empty');
     } else {
