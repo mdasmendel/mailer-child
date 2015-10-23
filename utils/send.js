@@ -101,12 +101,12 @@ var sendEmail = function (hostname, message) {
     };
 
     var html = compileString(message.html, message.vars);
-    var subject = compileString(message.subject, message.vars);
+    //var subject = compileString(message.subject, message.vars);
 
     var optionsEmail = {
         from: message.from,
         to: message.to,
-        subject: subject,
+        subject: message.subject,
         html: html
     };
 
