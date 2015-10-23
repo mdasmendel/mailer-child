@@ -106,7 +106,7 @@ var sendEmail = function (hostname, message) {
     var optionsEmail = {
         from: message.from,
         to: message.to,
-        subject: message.subject,
+        subject: subject,
         html: html
     };
 
