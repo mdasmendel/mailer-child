@@ -108,7 +108,14 @@ app.get('/get-dkym', function (req, res) {
         })
 
 });
-var PORT = 9000;
+
+app.get('/hello', function (req, res) {
+
+            res.send('hello world');
+
+
+});
+var PORT = 8080;
 
 app.listen(PORT);
 console.log('Running on http://localhost:' + PORT);
