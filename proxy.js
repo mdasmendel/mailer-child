@@ -115,6 +115,7 @@ function startExpress(connection) {
     app._rdbConn = connection;
     app.listen(dbConfig.express.port);
     console.log('Listening on port ' + dbConfig.express.port);
+
 }
 
 /*
