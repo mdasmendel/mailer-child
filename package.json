@@ -13,6 +13,7 @@
     "nodemailer-express-handlebars": "^1.0.0",
     "nodemailer-html-to-text": "^1.0.2",
     "q": "^1.4.1",
-    "request": "^2.64.0"
+    "request": "^2.64.0",
+    "rethinkdb": "^2.1.1"
   }
 }
