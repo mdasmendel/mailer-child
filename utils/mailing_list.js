@@ -1,0 +1,106 @@
+/**
+ * Created by Mihai on 27.10.2015.
+ */
+var r = require('rethinkdb');
+
+
+
+function addMember(members, list, connn, cb) {
+
+    if(members.length === 0){
+        cb()
+    } else {
+        var member = members[0];
+        members.splice(0,1);
+        r.table(list).insert(member, {returnChanges: true}).run(connn, function (err, result) {
+            if (err) {
+                cb(err);
+                member = null;
+                list = null;
+                connn = null;
+            } else {
+                setTimeout(function(){
+                    console.log('remain: ', members.length);
+                    addMember(members,list,connn, cb);
+                    member = null;
+                    list = null;
+                    connn = null;
+                })
+            }
+
+        });
+    }
+}
+
+function deleteList(req, res, next){
+    r.table(req.params.listName).delete().run(req.app._rdbConn, function (err, result) {
+        if (err) {
+            return next(err);
+        }
+
+        res.send('list ' + req.params.listName + 'was deleted');
+    });
+}
+
+function addMembers(req, res, next) {
+
+    var members = req.body.members;
+
+    addMember(members, req.params.listName, req.app._rdbConn, function(err){
+        if (err) {
+            res.status(400).send(err)
+        } else {
+            res.send('ok')
+        }
+    })
+}
+
+function getLists(req, res, next) {
+    r.tableList().run(req.app._rdbConn, function (err, result) {
+        if (err) {
+            return next(err);
+        }
+
+        res.json(result);
+    });
+}
+
+function createList(req, res, next) {
+    console.log(req.body);
+    r.tableCreate(req.body.address).run(req.app._rdbConn, function (err, result) {
+        if (err) {
+            return next(err);
+        }
+
+        res.json(result);
+    });
+}
+
+/*
+ * Get items.
+ */
+function getMembers(req, res, next) {
+    r.table(req.params.listName).run(req.app._rdbConn, function (err, cursor) {
+        if (err) {
+            return next(err);
+        }
+
+        //Retrieve all the todos in an array.
+        cursor.toArray(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.json(result);
+        });
+    });
+}
+
+module.exports = {
+    sendMessage: sendMessage,
+    addMembers: addMembers,
+    getLists: getLists,
+    createList: createList,
+    deleteList: deleteList,
+    getMembers: getMembers
+};

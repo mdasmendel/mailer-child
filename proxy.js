@@ -9,6 +9,7 @@ var send = require(__dirname + '/utils/send');
 var async = require('async');
 var r = require('rethinkdb');
 var dbConfig = require(__dirname + '/utils/db_config.js');
+var mailingListApi = require(__dirname + '/utils/mailing-list.js');
 
 var app = express();
 
@@ -23,6 +24,16 @@ app.use(function (req, res, next) {
 
     next();
 });
+
+app.route('/api/v1/lists/:listName?')
+    .get(mailingListApi.getLists)
+    .post(mailingListApi.createList)
+    .delete(mailingListApi.deleteList);
+
+app.route('/api/v1/:listName/members')
+    .get(mailingListApi.getMembers)
+    .post(mailingListApi.addMembers);
+
 
 app.get('/', function (req, res) {
     res.send('Hello world\n');

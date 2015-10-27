@@ -6,7 +6,7 @@ module.exports = {
         host: process.env.DB_PORT_28015_TCP_ADDR,
         port: 28015,
         authKey: '',
-        db: 'rethinkdb_ex'
+        db: 'mailing_lists'
     },
     express: {
         port: 9000
