@@ -12,7 +12,7 @@ function addMember(members, list, connn, cb) {
     } else {
         var member = members[0];
         members.splice(0,1);
-        r.branch(r.table(list).getAll(member.email, {index: "email"}).isEmpty(),
+        r.branch(r.table(list).getAll(member.address, {index: "address"}).isEmpty(),
             r.table(list).insert(member),
             {}).run(connn, function (err, result) {
                 if (err) {
@@ -74,7 +74,7 @@ function createList(req, res, next) {
         if (err) {
             return next(err);
         }
-        r.table(req.body.address).indexCreate('email').run(req.app._rdbConn,function (err, cursor) {
+        r.table(req.body.address).indexCreate('address').run(req.app._rdbConn,function (err, cursor) {
             if (err) {
                 return next(err);
             }
