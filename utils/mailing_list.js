@@ -104,21 +104,21 @@ function getMembers(req, res, next) {
     });
 }
 
-function nextReecipient(recipients, hostname, letter, cb){
+function nextReecipient(recipients, letter, hostname, cb){
     if(recipients.length === 0){
         cb()
     } else {
         var recipient = recipients[0];
-
+        //console.log(recipient);
         var message = {
             from: letter.from,
             to: recipient.address,
-            subject: compileString(letter.html, recipient.vars),
+            subject: compileString(letter.subject, recipient.vars),
             html: compileString(letter.html, recipient.vars)
         };
         send.sendEmailCampaign(hostname, message)
             .then(function () {
-                nextReecipient(recipients, letter, cb);
+                nextReecipient(recipients, letter, hostname, cb);
                 recipients = null;
                 letter = null;
             }, function (err) {
