@@ -109,6 +109,7 @@ function nextReecipient(recipients, letter, hostname, cb){
         cb()
     } else {
         var recipient = recipients[0];
+        recipients.splice(0,1);
         //console.log(recipient);
         var message = {
             from: letter.from,
