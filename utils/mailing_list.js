@@ -105,7 +105,7 @@ function getMembers(req, res, next) {
 }
 
 function nextReecipient(recipients, hostname, letter, cb){
-    if(members.length === 0){
+    if(recipients.length === 0){
         cb()
     } else {
         var recipient = recipients[0];
