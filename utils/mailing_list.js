@@ -78,7 +78,7 @@ function createList(req, res, next) {
             if (err) {
                 return next(err);
             }
-                res.json(result);
+                res.json(cursor);
         });
     });
 }
