@@ -12,24 +12,9 @@ function addMember(members, list, connn, cb) {
     } else {
         var member = members[0];
         members.splice(0,1);
-        r.branch(r.table(list).getAll(member.email, {index: "email"}).isEmpty(),
-            r.table(list).insert(member).run(connn, function (err, result) {
-                if (err) {
-                    cb(err);
-                    member = null;
-                    list = null;
-                    connn = null;
-                } else {
-                    setTimeout(function(){
-                        console.log('remain: ', members.length);
-                        addMember(members,list,connn, cb);
-                        member = null;
-                        list = null;
-                        connn = null;
-                    })
-                }
-
-            }),
+        r.branch(
+            r.table(list).getAll(member.email, {index: "email"}).isEmpty(),
+            r.table(list).insert(member),
             {})
         ;
     }
