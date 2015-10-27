@@ -9,7 +9,7 @@ var send = require(__dirname + '/utils/send');
 var async = require('async');
 var r = require('rethinkdb');
 var dbConfig = require(__dirname + '/utils/db_config.js');
-var mailingListApi = require(__dirname + '/utils/mailing-list.js');
+var mailingListApi = require(__dirname + '/utils/mailing_list.js');
 
 var app = express();
 

@@ -12,23 +12,26 @@ function addMember(members, list, connn, cb) {
     } else {
         var member = members[0];
         members.splice(0,1);
-        r.table(list).insert(member, {returnChanges: true}).run(connn, function (err, result) {
-            if (err) {
-                cb(err);
-                member = null;
-                list = null;
-                connn = null;
-            } else {
-                setTimeout(function(){
-                    console.log('remain: ', members.length);
-                    addMember(members,list,connn, cb);
+        r.branch(r.table(list).getAll(members.email, {index: "email"}).isEmpty(),
+            r.table(list).insert(member, {returnChanges: true}).run(connn, function (err, result) {
+                if (err) {
+                    cb(err);
                     member = null;
                     list = null;
                     connn = null;
-                })
-            }
+                } else {
+                    setTimeout(function(){
+                        console.log('remain: ', members.length);
+                        addMember(members,list,connn, cb);
+                        member = null;
+                        list = null;
+                        connn = null;
+                    })
+                }
 
-        });
+            }),
+            {})
+        ;
     }
 }
 
@@ -71,8 +74,12 @@ function createList(req, res, next) {
         if (err) {
             return next(err);
         }
-
-        res.json(result);
+        r.table(req.body.address).indexCreate('email').run(req.app._rdbConn,function (err, cursor) {
+            if (err) {
+                return next(err);
+            }
+                res.json(result);
+        });
     });
 }
 
@@ -97,7 +104,6 @@ function getMembers(req, res, next) {
 }
 
 module.exports = {
-    sendMessage: sendMessage,
     addMembers: addMembers,
     getLists: getLists,
     createList: createList,
