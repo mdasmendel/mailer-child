@@ -110,7 +110,7 @@ function nextReecipient(recipients, letter, hostname, cb){
     } else {
         var recipient = recipients[0];
         recipients.splice(0,1);
-        //console.log(recipient);
+        console.log(recipient);
         var message = {
             from: letter.from,
             to: recipient.address,
@@ -126,7 +126,7 @@ function nextReecipient(recipients, letter, hostname, cb){
                     letter = null;
                 }, 500)
             }, function (err) {
-                console.log('err ', recipient)
+                console.log('err ', message)
                 cb(err);
                 recipients = null;
                 letter = null;
