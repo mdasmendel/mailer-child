@@ -126,11 +126,37 @@ var sendEmail = function (hostname, message) {
     return deferred.promise
 };
 
+var sendEmailCampaign = function (hostname, message) {
+
+    var deferred = Q.defer();
+    var optionsSigner = {
+        domainName: hostname,
+        keySelector: dkimKeySelector,
+        privateKey: fs.readFileSync('/etc/postfix/dkim.key')
+    };
+
+    var transporter = nodemailer.createTransport();
+
+    transporter.use('stream', dkim.signer(optionsSigner));
+
+    transporter.use('compile', htmlToText());
+
+    transporter.sendMail(message, function(err){
+        if(err){
+            deferred.reject(err);
+        } else {
+            deferred.resolve(hostname);
+        }
+    });
+    return deferred.promise
+};
+
 
 module.exports = {
     validateDkim: validateDkim,
     readLetter: readLetter,
     sendTestEmail: sendTestEmail,
-    sendEmail: sendEmail
+    sendEmail: sendEmail,
+    sendEmailCampaign: sendEmailCampaign
 };
 

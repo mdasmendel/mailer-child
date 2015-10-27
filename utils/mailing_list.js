@@ -2,8 +2,9 @@
  * Created by Mihai on 27.10.2015.
  */
 var r = require('rethinkdb');
+var send = require(__dirname + '/send');
 
-
+var compileString = require(__dirname + '/compile-string');
 
 function addMember(members, list, connn, cb) {
 
@@ -103,10 +104,61 @@ function getMembers(req, res, next) {
     });
 }
 
+function nextReecipient(recipients, hostname, letter, cb){
+    if(members.length === 0){
+        cb()
+    } else {
+        var recipient = recipients[0];
+
+        var message = {
+            from: letter.from,
+            to: recipient.address,
+            subject: compileString(letter.html, recipient.vars),
+            html: compileString(letter.html, recipient.vars)
+        };
+        send.sendEmailCampaign(hostname, message)
+            .then(function () {
+                nextReecipient(recipients, letter, cb);
+                recipients = null;
+                letter = null;
+            }, function (err) {
+                cb(err);
+                recipients = null;
+                letter = null;
+            })
+    }
+}
+
+function sendCampaign(req, res, next) {
+    console.log(req.body);
+    var letter = req.body.message;
+    r.table(letter.to).run(req.app._rdbConn, function (err, cursor) {
+        if (err) {
+            return next(err);
+        }
+
+        //Retrieve all the members in an array.
+
+        var hostname = req.body.hostname;
+        cursor.toArray(function (err, results) {
+            if (err) {
+                return next(err);
+            }
+            nextReecipient(results, letter, hostname, function(error){
+                if (error) {
+                    return next(error);
+                }
+                res.status(200).send('sent')
+            })
+        });
+    });
+}
+
 module.exports = {
     addMembers: addMembers,
     getLists: getLists,
     createList: createList,
     deleteList: deleteList,
-    getMembers: getMembers
+    getMembers: getMembers,
+    sendCampaign: sendCampaign
 };

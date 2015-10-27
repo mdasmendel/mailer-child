@@ -34,7 +34,7 @@ app.route('/api/v1/:listName/members')
     .get(mailingListApi.getMembers)
     .post(mailingListApi.addMembers);
 
-
+app.post('/api/v1/send-campaign', mailingListApi.sendCampaign);
 app.get('/', function (req, res) {
     res.send('Hello world\n');
 });
