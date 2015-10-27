@@ -150,12 +150,14 @@ function sendCampaign(req, res, next) {
             if (err) {
                 return next(err);
             }
+
             nextReecipient(results, letter, hostname, function(error){
                 if (error) {
                     return next(error);
                 }
-                res.status(200).send('sent')
-            })
+            });
+            res.status(200).send('sending');
+
         });
     });
 }
