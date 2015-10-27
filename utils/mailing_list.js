@@ -119,11 +119,11 @@ function nextReecipient(recipients, letter, hostname, cb){
         };
         send.sendEmailCampaign(hostname, message)
             .then(function () {
-                setTimeout(function(){
+                //setTimeout(function(){
                     nextReecipient(recipients, letter, hostname, cb);
                     recipients = null;
                     letter = null;
-                }, 500)
+                //}, 500)
             }, function (err) {
                 cb(err);
                 recipients = null;
