@@ -126,10 +126,11 @@ function nextReecipient(recipients, letter, hostname, cb){
                     letter = null;
                 }, 500)
             }, function (err) {
-                console.log('err ', message)
-                cb(err);
-                recipients = null;
-                letter = null;
+                setTimeout(function(){
+                    nextReecipient(recipients, letter, hostname, cb);
+                    recipients = null;
+                    letter = null;
+                }, 500)
             })
     }
 }
