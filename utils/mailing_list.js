@@ -13,7 +13,7 @@ function addMember(members, list, connn, cb) {
         var member = members[0];
         members.splice(0,1);
         r.branch(r.table(list).getAll(member.email, {index: "email"}).isEmpty(),
-            r.table(list).insert(member, {returnChanges: true}).run(connn, function (err, result) {
+            r.table(list).insert(member).run(connn, function (err, result) {
                 if (err) {
                     cb(err);
                     member = null;
