@@ -3,6 +3,7 @@
  */
 var r = require('rethinkdb');
 var send = require(__dirname + '/send');
+Q = require('q');
 
 var compileString = require(__dirname + '/compile-string');
 
@@ -104,7 +105,7 @@ function getMembers(req, res, next) {
     });
 }
 
-function nextReecipient(recipients, letter, hostname, cb){
+function nextReecipient(recipients, letter, hostname, logList, cb){
     if(recipients.length === 0){
         cb()
     } else {
@@ -121,7 +122,7 @@ function nextReecipient(recipients, letter, hostname, cb){
             .then(function () {
                 console.log('sent ', message)
                 setTimeout(function(){
-                    nextReecipient(recipients, letter, hostname, cb);
+                    nextReecipient(recipients, letter, hostname, logList, cb);
                     recipients = null;
                     letter = null;
                 }, 500)
@@ -129,9 +130,11 @@ function nextReecipient(recipients, letter, hostname, cb){
                 console.log('err ', message);
                 console.log(1, err.toString());
                 console.log(2, err);
+                r.table(logList).insert(err).run(req.app._rdbConn);
+
 
                 setTimeout(function(){
-                    nextReecipient(recipients, letter, hostname, cb);
+                    nextReecipient(recipients, letter, hostname,logList, cb);
                     recipients = null;
                     letter = null;
                 }, 500)
@@ -139,31 +142,51 @@ function nextReecipient(recipients, letter, hostname, cb){
     }
 }
 
+function creteLogList(name, conn){
+    var deferred = Q.defer();
+    r.tableCreate(name + 'Log').run(conn, function (err) {
+        if (err) {
+            deferred.reject(err)
+        } else {
+            deferred.resolve(name + 'Log')
+        }
+
+    });
+    return deferred.promise
+
+}
+
 function sendCampaign(req, res, next) {
     console.log(req.body);
     var letter = req.body.message;
-    r.table(letter.to).run(req.app._rdbConn, function (err, cursor) {
-        if (err) {
-            return next(err);
-        }
-
-        //Retrieve all the members in an array.
-
-        var hostname = req.body.hostname;
-        cursor.toArray(function (err, results) {
-            if (err) {
-                return next(err);
-            }
-
-            nextReecipient(results, letter, hostname, function(error){
-                if (error) {
-                    return next(error);
+    creteLogList(letter.to, req.app._rdbConn)
+        .then(function (logList) {
+            r.table(letter.to).run(req.app._rdbConn, function (err, cursor) {
+                if (err) {
+                    return next(err);
                 }
-            });
-            res.status(200).send('sending');
 
-        });
-    });
+                //Retrieve all the members in an array.
+
+                var hostname = req.body.hostname;
+                cursor.toArray(function (err, results) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    nextReecipient(results, letter, hostname,logList, function(error){
+                        if (error) {
+                            return next(error);
+                        }
+                    });
+                    res.status(200).send('sending');
+
+                });
+            });
+        }, function (err) {
+            return next(err);
+        })
+
 }
 
 module.exports = {
