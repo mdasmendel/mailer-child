@@ -120,13 +120,10 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
         };
         send.sendEmailCampaign(hostname, message)
             .then(function () {
-                console.log('sent ', message);
                 r.table(logList).insert({
                     status: 'success',
                     head: 'Delivered',
-                    content: {
-                        Recipient: recipient.address
-                    }
+                    Recipient: recipient.address
                 }).run(conn);
                 setTimeout(function () {
                     nextReecipient(recipients, letter, hostname, logList, conn, cb);
@@ -134,26 +131,12 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
                     letter = null;
                 }, 500)
             }, function (err) {
-                console.log('err ', message);
-                console.log(1, err.toString());
-                console.log(2, err);
-                console.log(3, err.errors[0]);
-
                 r.table(logList).insert({
                     status: 'error',
                     head: err.toString(),
+                    Recipient: recipient.address,
                     content: JSON.parse(JSON.stringify(err))
                 }).run(conn);
-                //if (err.errors[0]){
-                //    r.table(logList).insert({
-                //        code: err.errors[0].code,
-                //        response: err.errors[0].response,
-                //        responseCode: err.errors[0].responseCode,
-                //        domain: err.errors[0].domain,
-                //        exchange: err.errors[0].exchange,
-                //        recipients: err.errors[0].recipients
-                //    }).run(conn);
-                //}
 
 
                 setTimeout(function () {
