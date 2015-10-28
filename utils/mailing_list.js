@@ -131,7 +131,7 @@ function nextReecipient(recipients, letter, hostname, logList, cb){
                 console.log(1, err.toString());
                 console.log(2, err);
                 console.log(3, err.errors[0]);
-                r.table(logList).insert(err.errors).run(req.app._rdbConn);
+                r.table(logList).insert(err.errors[0]).run(req.app._rdbConn);
 
 
                 setTimeout(function(){
