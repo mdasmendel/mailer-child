@@ -9,11 +9,11 @@ var compileString = require(__dirname + '/compile-string');
 
 function addMember(members, list, connn, cb) {
 
-    if(members.length === 0){
+    if (members.length === 0) {
         cb()
     } else {
         var member = members[0];
-        members.splice(0,1);
+        members.splice(0, 1);
         r.branch(r.table(list).getAll(member.address, {index: "address"}).isEmpty(),
             r.table(list).insert(member),
             {}).run(connn, function (err, result) {
@@ -23,9 +23,9 @@ function addMember(members, list, connn, cb) {
                     list = null;
                     connn = null;
                 } else {
-                    setTimeout(function(){
+                    setTimeout(function () {
                         console.log('remain: ', members.length);
-                        addMember(members,list,connn, cb);
+                        addMember(members, list, connn, cb);
                         member = null;
                         list = null;
                         connn = null;
@@ -37,7 +37,7 @@ function addMember(members, list, connn, cb) {
     }
 }
 
-function deleteList(req, res, next){
+function deleteList(req, res, next) {
     r.table(req.params.listName).delete().run(req.app._rdbConn, function (err, result) {
         if (err) {
             return next(err);
@@ -51,7 +51,7 @@ function addMembers(req, res, next) {
 
     var members = req.body.members;
 
-    addMember(members, req.params.listName, req.app._rdbConn, function(err){
+    addMember(members, req.params.listName, req.app._rdbConn, function (err) {
         if (err) {
             res.status(400).send(err)
         } else {
@@ -76,11 +76,11 @@ function createList(req, res, next) {
         if (err) {
             return next(err);
         }
-        r.table(req.body.address).indexCreate('address').run(req.app._rdbConn,function (err, cursor) {
+        r.table(req.body.address).indexCreate('address').run(req.app._rdbConn, function (err, cursor) {
             if (err) {
                 return next(err);
             }
-                res.json(cursor);
+            res.json(cursor);
         });
     });
 }
@@ -105,12 +105,12 @@ function getMembers(req, res, next) {
     });
 }
 
-function nextReecipient(recipients, letter, hostname, logList, conn, cb){
-    if(recipients.length === 0){
+function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
+    if (recipients.length === 0) {
         cb()
     } else {
         var recipient = recipients[0];
-        recipients.splice(0,1);
+        recipients.splice(0, 1);
         console.log(recipient);
         var message = {
             from: letter.from,
@@ -128,8 +128,8 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                         Recipient: recipient.address
                     }
                 }).run(conn);
-                setTimeout(function(){
-                    nextReecipient(recipients, letter, hostname, logList, conn,cb);
+                setTimeout(function () {
+                    nextReecipient(recipients, letter, hostname, logList, conn, cb);
                     recipients = null;
                     letter = null;
                 }, 500)
@@ -139,11 +139,11 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                 console.log(2, err);
                 console.log(3, err.errors[0]);
 
-                    r.table(logList).insert({
-                       status: 'error',
-                       head: err.toString(),
-                       content: JSON.parse(JSON.stringify(err))
-                    }).run(conn);
+                r.table(logList).insert({
+                    status: 'error',
+                    head: err.toString(),
+                    content: JSON.parse(JSON.stringify(err))
+                }).run(conn);
                 //if (err.errors[0]){
                 //    r.table(logList).insert({
                 //        code: err.errors[0].code,
@@ -156,9 +156,8 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                 //}
 
 
-
-                setTimeout(function(){
-                    nextReecipient(recipients, letter, hostname,logList, conn, cb);
+                setTimeout(function () {
+                    nextReecipient(recipients, letter, hostname, logList, conn, cb);
                     recipients = null;
                     letter = null;
                 }, 500)
@@ -166,7 +165,7 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
     }
 }
 
-function creteLogList(name, conn){
+function creteLogList(name, conn) {
     var deferred = Q.defer();
     r.tableCreate(name + 'Log').run(conn, function (err) {
         if (err) {
@@ -198,7 +197,7 @@ function sendCampaign(req, res, next) {
                         return next(err);
                     }
 
-                    nextReecipient(results, letter, hostname,logList,req.app._rdbConn, function(error){
+                    nextReecipient(results, letter, hostname, logList, req.app._rdbConn, function (error) {
                         if (error) {
                             return next(error);
                         }
