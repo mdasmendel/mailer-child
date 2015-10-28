@@ -120,7 +120,12 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
         };
         send.sendEmailCampaign(hostname, message)
             .then(function () {
-                console.log('sent ', message)
+                console.log('sent ', message);
+                r.table(logList).insert({
+                    status: 'success',
+                    head: 'Delivered',
+                    content: 'Recipient ' + recipient.address
+                }).run(conn);
                 setTimeout(function(){
                     nextReecipient(recipients, letter, hostname, logList, conn,cb);
                     recipients = null;
@@ -131,16 +136,22 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                 console.log(1, err.toString());
                 console.log(2, err);
                 console.log(3, err.errors[0]);
-                if (err.errors[0]){
+
                     r.table(logList).insert({
-                        code: err.errors[0].code,
-                        response: err.errors[0].response,
-                        responseCode: err.errors[0].responseCode,
-                        domain: err.errors[0].domain,
-                        exchange: err.errors[0].exchange,
-                        recipients: err.errors[0].recipients
+                       status: 'error',
+                       head: err.toString(),
+                       content: JSON.stringify(err)
                     }).run(conn);
-                }
+                //if (err.errors[0]){
+                //    r.table(logList).insert({
+                //        code: err.errors[0].code,
+                //        response: err.errors[0].response,
+                //        responseCode: err.errors[0].responseCode,
+                //        domain: err.errors[0].domain,
+                //        exchange: err.errors[0].exchange,
+                //        recipients: err.errors[0].recipients
+                //    }).run(conn);
+                //}
 
 
 
