@@ -131,7 +131,7 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                 console.log(1, err.toString());
                 console.log(2, err);
                 console.log(3, err.errors[0]);
-                r.table(logList).insert({head: err.toString(), content: JSON.stringify(err.errors[0])}).run(conn);
+                r.table(logList).insert({head: err.toString(), content: JSON.parse(err.errors[0])}).run(conn);
 
 
                 setTimeout(function(){
