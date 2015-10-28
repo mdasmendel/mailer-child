@@ -127,7 +127,8 @@ function nextReecipient(recipients, letter, hostname, cb){
                 }, 500)
             }, function (err) {
                 console.log('err ', message);
-                console.log(err);
+                console.log(1, err.toString());
+                console.log(2, err.error);
 
                 setTimeout(function(){
                     nextReecipient(recipients, letter, hostname, cb);
