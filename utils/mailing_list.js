@@ -105,7 +105,7 @@ function getMembers(req, res, next) {
     });
 }
 
-function nextReecipient(recipients, letter, hostname, logList, cb){
+function nextReecipient(recipients, letter, hostname, logList, conn, cb){
     if(recipients.length === 0){
         cb()
     } else {
@@ -122,7 +122,7 @@ function nextReecipient(recipients, letter, hostname, logList, cb){
             .then(function () {
                 console.log('sent ', message)
                 setTimeout(function(){
-                    nextReecipient(recipients, letter, hostname, logList, cb);
+                    nextReecipient(recipients, letter, hostname, logList, conn,cb);
                     recipients = null;
                     letter = null;
                 }, 500)
@@ -131,11 +131,11 @@ function nextReecipient(recipients, letter, hostname, logList, cb){
                 console.log(1, err.toString());
                 console.log(2, err);
                 console.log(3, err.errors[0]);
-                r.table(logList).insert(err.errors[0]).run(req.app._rdbConn);
+                r.table(logList).insert(err.errors[0]).run(conn);
 
 
                 setTimeout(function(){
-                    nextReecipient(recipients, letter, hostname,logList, cb);
+                    nextReecipient(recipients, letter, hostname,logList, conn, cb);
                     recipients = null;
                     letter = null;
                 }, 500)
@@ -175,7 +175,7 @@ function sendCampaign(req, res, next) {
                         return next(err);
                     }
 
-                    nextReecipient(results, letter, hostname,logList, function(error){
+                    nextReecipient(results, letter, hostname,logList,req.app._rdbConn, function(error){
                         if (error) {
                             return next(error);
                         }
