@@ -124,7 +124,9 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                 r.table(logList).insert({
                     status: 'success',
                     head: 'Delivered',
-                    content: 'Recipient ' + recipient.address
+                    content: {
+                        Recipient: recipient.address
+                    }
                 }).run(conn);
                 setTimeout(function(){
                     nextReecipient(recipients, letter, hostname, logList, conn,cb);
@@ -140,7 +142,7 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                     r.table(logList).insert({
                        status: 'error',
                        head: err.toString(),
-                       content: JSON.stringify(err)
+                       content: JSON.parse(JSON.stringify(err))
                     }).run(conn);
                 //if (err.errors[0]){
                 //    r.table(logList).insert({
