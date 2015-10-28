@@ -131,7 +131,17 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb){
                 console.log(1, err.toString());
                 console.log(2, err);
                 console.log(3, err.errors[0]);
-                r.table(logList).insert({head: err.toString(), content: JSON.parse(err.errors[0])}).run(conn);
+                if (err.errors[0]){
+                    r.table(logList).insert({
+                        code: err.errors[0].code,
+                        response: err.errors[0].response,
+                        responseCode: err.errors[0].responseCode,
+                        domain: err.errors[0].domain,
+                        exchange: err.errors[0].exchange,
+                        recipients: err.errors[0].recipients
+                    }).run(conn);
+                }
+
 
 
                 setTimeout(function(){
