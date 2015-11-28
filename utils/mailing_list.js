@@ -77,7 +77,7 @@ function getLogLists(req, res, next) {
         }
         var logLists = [];
         for(var i = 0; i < result.length; i++){
-            if(result[i].match(/_logs$/).length){
+            if(result[i].match(/_logs$/)){
                 logLists.push(result[i])
             }
         }
