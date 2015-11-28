@@ -139,7 +139,7 @@ function getLogsByList(req, res, next) {
 }
 
 function sendFunc(data, cb) {
-    var start = new Date();
+    var start = new Date().getTime();
     var message = {
         from: data.letter.from,
         to: data.recipient.address,
@@ -154,9 +154,9 @@ function sendFunc(data, cb) {
                 head: 'Delivered',
                 Recipient: data.recipient.address
             }).run(data.conn);
-            var end = new Date();
+            var end = new Date().getTime();
             if(end - start < 60000){
-                console.log('waite ' + end - start)
+                console.log('waite ' + (end - start))
                 setTimeout(function(){
                     cb()
                 }, end - start)
@@ -171,9 +171,9 @@ function sendFunc(data, cb) {
                 Recipient: data.recipient.address,
                 content: JSON.parse(JSON.stringify(err))
             }).run(data.conn);
-            var end = new Date();
+            var end = new Date().getTime();
             if(end - start < 60000){
-                console.log('waite ' + end - start)
+                console.log('waite ' + (end - start));
                 setTimeout(function(){
                     cb()
                 }, end - start)
