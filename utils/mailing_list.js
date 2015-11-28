@@ -2,6 +2,7 @@
  * Created by Mihai on 27.10.2015.
  */
 var r = require('rethinkdb');
+var async = require('async');
 var send = require(__dirname + '/send');
 Q = require('q');
 
@@ -76,8 +77,8 @@ function getLogLists(req, res, next) {
             return next(err);
         }
         var logLists = [];
-        for(var i = 0; i < result.length; i++){
-            if(result[i].match(/_logs$/)){
+        for (var i = 0; i < result.length; i++) {
+            if (result[i].match(/_logs$/)) {
                 logLists.push(result[i])
             }
         }
@@ -135,6 +136,48 @@ function getLogsByList(req, res, next) {
             res.json(result);
         });
     });
+}
+
+function sendFunc(data, cb) {
+    var start = new Date();
+    var message = {
+        from: data.letter.from,
+        to: data.recipient.address,
+        subject: compileString(data.letter.subject, data.recipient.vars),
+        html: compileString(data.letter.html, data.recipient.vars)
+    };
+    send.sendEmailCampaign(data.hostname, message)
+        .then(function () {
+            r.table(data.logList).insert({
+                status: 'success',
+                head: 'Delivered',
+                Recipient: data.recipient.address
+            }).run(data.conn);
+            var end = new Date();
+            if(end - start < 60000){
+                setTimeout(function(){
+                    cb()
+                })
+            } else {
+                cb()
+            }
+
+        }, function (err) {
+            r.table(data.logList).insert({
+                status: 'error',
+                head: err.toString(),
+                Recipient: data.recipient.address,
+                content: JSON.parse(JSON.stringify(err))
+            }).run(data.conn);
+            var end = new Date();
+            if(end - start < 60000){
+                setTimeout(function(){
+                    cb()
+                })
+            } else {
+                cb()
+            }
+        })
 }
 
 function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
@@ -211,12 +254,26 @@ function sendCampaign(req, res, next) {
                     if (err) {
                         return next(err);
                     }
+                    var campaignFunc = async.queue(sendFunc, req.body.sendPerMinute);
 
-                    nextReecipient(results, letter, hostname, logList, req.app._rdbConn, function (error) {
-                        if (error) {
-                            return next(error);
-                        }
-                    });
+                    campaignFunc.drain = function () {
+                        console.log('sent');
+                    };
+
+                    for (var i = 0; i < results.length; i++) {
+                        campaignFunc.push({
+                            recipient: results[i],
+                            letter: letter,
+                            hostname: hostname,
+                            logList: logList,
+                            conn: req.app._rdbConn
+                        })
+                    }
+                    //nextReecipient(results, letter, hostname, logList, req.app._rdbConn, function (error) {
+                    //    if (error) {
+                    //        return next(error);
+                    //    }
+                    //});
                     res.status(200).send('sending');
 
                 });
