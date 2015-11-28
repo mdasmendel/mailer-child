@@ -43,8 +43,13 @@ function deleteList(req, res, next) {
         if (err) {
             return next(err);
         }
+        r.tableDrop(req.params.listName + "_logs").run(req.app._rdbConn, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-        res.send('list ' + req.params.listName + ' was deleted');
+            res.send('list ' + req.params.listName + ' was deleted');
+        });
     });
 }
 
