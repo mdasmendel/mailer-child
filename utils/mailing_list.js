@@ -39,12 +39,12 @@ function addMember(members, list, connn, cb) {
 }
 
 function deleteList(req, res, next) {
-    r.table(req.params.listName).delete().run(req.app._rdbConn, function (err, result) {
+    r.table_drop(req.params.listName).run(req.app._rdbConn, function (err, result) {
         if (err) {
             return next(err);
         }
 
-        res.send('list ' + req.params.listName + 'was deleted');
+        res.send('list ' + req.params.listName + ' was deleted');
     });
 }
 
