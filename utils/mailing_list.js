@@ -146,6 +146,7 @@ function sendFunc(data, cb) {
         subject: compileString(data.letter.subject, data.recipient.vars),
         html: compileString(data.letter.html, data.recipient.vars)
     };
+    console.log(data.recipient.address);
     send.sendEmailCampaign(data.hostname, message)
         .then(function () {
             r.table(data.logList).insert({
@@ -157,7 +158,7 @@ function sendFunc(data, cb) {
             if(end - start < 60000){
                 setTimeout(function(){
                     cb()
-                })
+                }, end - start)
             } else {
                 cb()
             }
@@ -173,7 +174,7 @@ function sendFunc(data, cb) {
             if(end - start < 60000){
                 setTimeout(function(){
                     cb()
-                })
+                }, end - start)
             } else {
                 cb()
             }
