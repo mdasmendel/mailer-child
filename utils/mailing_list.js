@@ -156,6 +156,7 @@ function sendFunc(data, cb) {
             }).run(data.conn);
             var end = new Date();
             if(end - start < 60000){
+                console.log('waite ' + end - start)
                 setTimeout(function(){
                     cb()
                 }, end - start)
@@ -172,6 +173,7 @@ function sendFunc(data, cb) {
             }).run(data.conn);
             var end = new Date();
             if(end - start < 60000){
+                console.log('waite ' + end - start)
                 setTimeout(function(){
                     cb()
                 }, end - start)
