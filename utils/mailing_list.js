@@ -48,8 +48,9 @@ function deleteList(req, res, next) {
                 return next(err);
             }
 
-            res.send('list ' + req.params.listName + ' was deleted');
         });
+        res.send('list ' + req.params.listName + ' was deleted');
+
     });
 }
 
