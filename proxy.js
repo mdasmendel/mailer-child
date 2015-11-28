@@ -30,6 +30,12 @@ app.route('/api/v1/lists/:listName?')
     .post(mailingListApi.createList)
     .delete(mailingListApi.deleteList);
 
+app.route('/api/v1/log-lists')
+    .get(mailingListApi.getLogLists);
+
+app.route('/api/v1/log-lists/:listName')
+    .get(mailingListApi.getLogsByList);
+
 app.route('/api/v1/:listName/members')
     .get(mailingListApi.getMembers)
     .post(mailingListApi.addMembers);

@@ -70,6 +70,21 @@ function getLists(req, res, next) {
     });
 }
 
+function getLogLists(req, res, next) {
+    r.tableList().run(req.app._rdbConn, function (err, result) {
+        if (err) {
+            return next(err);
+        }
+        var logLists = [];
+        for(var i = 0; i < result.length; i++){
+            if(result[i].match(/_logs$/).length){
+                logLists.push(result[i])
+            }
+        }
+        res.json(logLists);
+    });
+}
+
 function createList(req, res, next) {
     console.log(req.body);
     r.tableCreate(req.body.address).run(req.app._rdbConn, function (err, result) {
@@ -90,6 +105,23 @@ function createList(req, res, next) {
  */
 function getMembers(req, res, next) {
     r.table(req.params.listName).run(req.app._rdbConn, function (err, cursor) {
+        if (err) {
+            return next(err);
+        }
+
+        //Retrieve all the todos in an array.
+        cursor.toArray(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.json(result);
+        });
+    });
+}
+
+function getLogsByList(req, res, next) {
+    r.table(req.params.listName + '_logs').run(req.app._rdbConn, function (err, cursor) {
         if (err) {
             return next(err);
         }
@@ -150,11 +182,11 @@ function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
 
 function creteLogList(name, conn) {
     var deferred = Q.defer();
-    r.tableCreate(name + 'Log').run(conn, function (err) {
+    r.tableCreate(name + '_logs').run(conn, function (err) {
         if (err) {
             deferred.reject(err)
         } else {
-            deferred.resolve(name + 'Log')
+            deferred.resolve(name + '_logs')
         }
 
     });
@@ -198,6 +230,8 @@ function sendCampaign(req, res, next) {
 module.exports = {
     addMembers: addMembers,
     getLists: getLists,
+    getLogLists: getLogLists,
+    getLogsByList: getLogsByList,
     createList: createList,
     deleteList: deleteList,
     getMembers: getMembers,
