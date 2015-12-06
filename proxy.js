@@ -87,7 +87,7 @@ app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
-    if(req.body['o:tracking']){
+    if(message['o:tracking']){
         message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '"/>';
         console.log('send with tracking')
     }
