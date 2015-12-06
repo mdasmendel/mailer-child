@@ -93,6 +93,7 @@ app.post('/send-test', function (req, res) {
 
 });
 
+
 var addClickTracking = function (domain, html) {
     $ = cheerio.load(html);
 
@@ -101,7 +102,7 @@ var addClickTracking = function (domain, html) {
     inputs.attr('href', function(i, href){
         //var link = href.replace(domain, 'email')
 
-        return href.replace(/.+/, 'http://email.' + domain + '/' + (new Buffer(htrf).toString('base64')))
+        return href.replace(/.+/, 'http://email.' + domain + '/' + (new Buffer(href).toString('base64')))
     });
 
     //var newHtml = $('a').each(function(i, elem) {
