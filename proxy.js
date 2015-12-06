@@ -104,7 +104,7 @@ app.post('/send-message', function (req, res) {
     if (!hostname) {
         res.status(400).send('hostname is empty');
     } else {
-        send.sendEmail(hostname, message)
+        send.sendEmail(hostname, message, app._rdbConn)
             .then(function () {
                 res.status(200).send('sent')
             }, function (err) {

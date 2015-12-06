@@ -91,7 +91,7 @@ var sendTestEmail = function (hostname) {
     return deferred.promise
 };
 
-var sendEmail = function (hostname, message) {
+var sendEmail = function (hostname, message, conn) {
 
     var deferred = Q.defer();
     var optionsSigner = {
@@ -117,8 +117,19 @@ var sendEmail = function (hostname, message) {
 
     transporter.sendMail(optionsEmail, function(err){
         if(err){
+            r.table('nocampaign_logs').insert({
+                status: 'error',
+                head: err.toString(),
+                Recipient: message.to,
+                content: JSON.parse(JSON.stringify(err))
+            }).run(conn);
             deferred.reject(err);
         } else {
+            r.table('nocampaign_logs').insert({
+                status: 'success',
+                head: 'delivered',
+                Recipient: message.to
+            }).run(conn);
             deferred.resolve(hostname);
         }
     });
