@@ -178,5 +178,6 @@ module.exports = {
     connectMilterToPostfix: connectMilterToPostfix,
     generateDkym: generateDkym,
     copyInPostfix: copyInPostfix,
-    getDkym: getDkym
+    getDkym: getDkym,
+    jwtSecret: 'Dascal Mihai'
 }
