@@ -103,7 +103,7 @@ app.post('/send-message', function (req, res) {
     }
     $ = cheerio.load(message.html);
     $('a').each(function(i, elem) {
-        console.log($(this).text())
+        console.log($(this).attr('href'))
     });
 
 
