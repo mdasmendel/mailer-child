@@ -109,8 +109,6 @@ app.post('/send-test', function (req, res) {
 });
 
 
-
-
 app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
@@ -127,16 +125,16 @@ app.post('/send-message', function (req, res) {
 
 
     //console.log(req.body);
-    //if (!hostname) {
-    //    res.status(400).send('hostname is empty');
-    //} else {
-    //    send.sendEmail(hostname, message, app._rdbConn)
-    //        .then(function () {
-    res.status(200).send('sent')
-    //}, function (err) {
-    //    res.status(400).send(err)
-    //});
-    //}
+    if (!hostname) {
+        res.status(400).send('hostname is empty');
+    } else {
+        send.sendEmail(hostname, message, app._rdbConn)
+            .then(function () {
+                res.status(200).send('sent')
+            }, function (err) {
+                res.status(400).send(err)
+            });
+    }
 
 });
 
