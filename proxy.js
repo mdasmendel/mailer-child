@@ -44,6 +44,10 @@ app.post('/api/v1/send-campaign', mailingListApi.sendCampaign);
 app.get('/', function (req, res) {
     res.send('Hello world\n');
 });
+app.get('/tracking-image/:email', function (req, res) {
+    console.log('mail' + req.params.email + 'was open');
+    res.send('');
+});
 
 app.post('/send-test', function (req, res) {
     var hostname = req.body.hostname;
@@ -77,6 +81,7 @@ app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
+    message.html += '<img src="http://46.101.201.43:9090/tracking-image/mihai@mihai.com"/>';
     //console.log(req.body);
     if (!hostname) {
         res.status(400).send('hostname is empty');
