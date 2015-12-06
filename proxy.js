@@ -46,6 +46,14 @@ app.get('/', function (req, res) {
 });
 app.get('/tracking-image/:email', function (req, res) {
     console.log('mail ' + req.params.email + ' was open');
+    if(req.query.t){
+        r.table(req.query.t).insert({
+            status: 'success',
+            head: 'open',
+            Recipient: req.params.email
+        }).run(app._rdbConn);
+    }
+
     var buf = new Buffer([
         0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00,
         0x80, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x2c,
@@ -88,7 +96,7 @@ app.post('/send-message', function (req, res) {
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
     if(message['o:tracking']){
-        message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '"/>';
+        message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '?t=nocampaign"/>';
         console.log('send with tracking')
     }
 
@@ -172,11 +180,11 @@ async.waterfall([
     },
     function createTable(connection, callback) {
         //Create the table if needed.
-        r.tableList().contains('todos').do(function (containsTable) {
+        r.tableList().contains('nocampaign').do(function (containsTable) {
             return r.branch(
                 containsTable,
                 {created: 0},
-                r.tableCreate('todos')
+                r.tableCreate('nocampaign')
             );
         }).run(connection, function (err) {
             callback(err, connection);
@@ -184,11 +192,11 @@ async.waterfall([
     },
     function createIndex(connection, callback) {
         //Create the index if needed.
-        r.table('todos').indexList().contains('createdAt').do(function (hasIndex) {
+        r.table('nocampaign').indexList().contains('createdAt').do(function (hasIndex) {
             return r.branch(
                 hasIndex,
                 {created: 0},
-                r.table('todos').indexCreate('createdAt')
+                r.table('nocampaign').indexCreate('createdAt')
             );
         }).run(connection, function (err) {
             callback(err, connection);
@@ -196,7 +204,7 @@ async.waterfall([
     },
     function waitForIndex(connection, callback) {
         //Wait for the index to be ready.
-        r.table('todos').indexWait('createdAt').run(connection, function (err, result) {
+        r.table('nocampaign').indexWait('createdAt').run(connection, function (err, result) {
             callback(err, connection);
         });
     }
