@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var config = require(__dirname + '/utils/config');
 var send = require(__dirname + '/utils/send');
 var async = require('async');
+var cheerio = require('cheerio');
 var r = require('rethinkdb');
 var dbConfig = require(__dirname + '/utils/db_config.js');
 var mailingListApi = require(__dirname + '/utils/mailing_list.js');
@@ -100,18 +101,20 @@ app.post('/send-message', function (req, res) {
         message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '?t=nocampaign_logs"/>';
         console.log('send with tracking')
     }
+    $ = cheerio.load(message.html);
+    console.log($('a').html());
 
     //console.log(req.body);
-    if (!hostname) {
-        res.status(400).send('hostname is empty');
-    } else {
-        send.sendEmail(hostname, message, app._rdbConn)
-            .then(function () {
+    //if (!hostname) {
+    //    res.status(400).send('hostname is empty');
+    //} else {
+    //    send.sendEmail(hostname, message, app._rdbConn)
+    //        .then(function () {
                 res.status(200).send('sent')
-            }, function (err) {
-                res.status(400).send(err)
-            });
-    }
+            //}, function (err) {
+            //    res.status(400).send(err)
+            //});
+    //}
 
 });
 
