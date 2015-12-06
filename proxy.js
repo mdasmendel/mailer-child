@@ -45,7 +45,7 @@ app.get('/', function (req, res) {
     res.send('Hello world\n');
 });
 app.get('/tracking-image/:email', function (req, res) {
-    console.log('mail' + req.params.email + 'was open');
+    console.log('mail ' + req.params.email + ' was open');
     res.send('');
 });
 
