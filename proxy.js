@@ -106,7 +106,7 @@ var addClickTracking = function (domain, html) {
             domain: domain,
             link: href
         };
-        return href.replace(/.+/, 'http://email.' + domain + '/' + jwt.encode(payload))
+        return href.replace(/.+/, 'http://email.' + domain + '/' + jwt.encode(payload, ''))
     });
 
     //var newHtml = $('a').each(function(i, elem) {
