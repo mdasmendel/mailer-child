@@ -102,7 +102,7 @@ app.post('/send-message', function (req, res) {
         console.log('send with tracking')
     }
     $ = cheerio.load(message.html);
-    console.log($.find('a').html());
+    //console.log($.find('a').html());
 
     console.log(message);
     //if (!hostname) {
