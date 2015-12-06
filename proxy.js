@@ -65,6 +65,24 @@ app.get('/tracking-image/:email', function (req, res) {
     res.end(buf, 'binary');
 });
 
+app.post('/tracking-clicks', function (req, res) {
+
+    console.log('click');
+    console.log(req.body);
+
+    if (req.body.logList) {
+        r.table(req.body.logList).insert({
+            status: 'success',
+            head: 'clicked',
+            link: req.body.link,
+            Recipient: req.body.email,
+            createdAt: new Date()
+        }).run(app._rdbConn);
+    }
+
+    res.end('ok');
+});
+
 app.post('/send-test', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
@@ -94,8 +112,8 @@ app.post('/send-test', function (req, res) {
 });
 
 
-var addClickTracking = function (domain, html) {
-    $ = cheerio.load(html);
+var addClickTracking = function (domain, message, logList) {
+    $ = cheerio.load(message.html);
     var jwt = require('jwt-simple');
 
     var inputs = $('a');
@@ -104,16 +122,13 @@ var addClickTracking = function (domain, html) {
         //var link = href.replace(domain, 'email')
         var payload = {
             domain: domain,
-            link: href
+            link: href,
+            email: message.to,
+            logList: logList
         };
         return href.replace(/.+/, 'http://email.' + domain + '/' + jwt.encode(payload, config.jwtSecret))
     });
 
-    //var newHtml = $('a').each(function(i, elem) {
-    //
-    //    $(this).attr('href','new value')
-    //
-    //});
     return $.html()
 
 }
@@ -128,7 +143,7 @@ app.post('/send-message', function (req, res) {
     }
 
     if (message['c:tracking']) {
-        message.html = addClickTracking(hostname, message.html), 0
+        message.html = addClickTracking(hostname, message, 'nocampaign_logs')
 
     }
     console.log(1, message.html);
