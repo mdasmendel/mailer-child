@@ -97,7 +97,7 @@ var addClickTracking = function (domain, html, cb) {
     $ = cheerio.load(html);
     var newHtml = $('a').each(function(i, elem) {
 
-        elem.attr('href','new value')
+        $(this).attr('href','new value')
 
     });
     cb(newHtml.html())
