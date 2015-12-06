@@ -47,7 +47,7 @@ app.get('/', function (req, res) {
 });
 app.get('/tracking-image/:email', function (req, res) {
     console.log('mail ' + req.params.email + ' was open');
-    if(req.query.t){
+    if (req.query.t) {
         r.table(req.query.t).insert({
             status: 'success',
             head: 'open',
@@ -62,7 +62,7 @@ app.get('/tracking-image/:email', function (req, res) {
         0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02,
         0x02, 0x44, 0x01, 0x00, 0x3b]);
     res.writeHead('200', {'Content-Type': 'image/png'});
-    res.end(buf,'binary');
+    res.end(buf, 'binary');
 });
 
 app.post('/send-test', function (req, res) {
@@ -96,13 +96,17 @@ app.post('/send-test', function (req, res) {
 
 var addClickTracking = function (domain, html) {
     $ = cheerio.load(html);
+    var jwt = require('jwt-simple');
 
     var inputs = $('a');
 
-    inputs.attr('href', function(i, href){
+    inputs.attr('href', function (i, href) {
         //var link = href.replace(domain, 'email')
-
-        return href.replace(/.+/, 'http://email.' + domain + '/' + (new Buffer(href).toString('base64')))
+        var payload = {
+            domain: domain,
+            link: href
+        };
+        return href.replace(/.+/, 'http://email.' + domain + '/' + jwt.encode(payload))
     });
 
     //var newHtml = $('a').each(function(i, elem) {
@@ -118,16 +122,16 @@ app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
-    if(message['o:tracking']){
+    if (message['o:tracking']) {
         message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '?t=nocampaign_logs"/>';
         console.log('send with tracking')
     }
 
-    if(message['c:tracking']){
-        message.html = addClickTracking(hostname, message.html),0
+    if (message['c:tracking']) {
+        message.html = addClickTracking(hostname, message.html), 0
 
     }
-    console.log(1, message.html );
+    console.log(1, message.html);
 
 
     //console.log(req.body);
@@ -136,10 +140,10 @@ app.post('/send-message', function (req, res) {
     //} else {
     //    send.sendEmail(hostname, message, app._rdbConn)
     //        .then(function () {
-                res.status(200).send('sent')
-            //}, function (err) {
-            //    res.status(400).send(err)
-            //});
+    res.status(200).send('sent')
+    //}, function (err) {
+    //    res.status(400).send(err)
+    //});
     //}
 
 });
