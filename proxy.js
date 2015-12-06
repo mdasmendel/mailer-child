@@ -104,7 +104,7 @@ app.post('/send-message', function (req, res) {
     $ = cheerio.load(message.html);
     console.log($.find('a').html());
 
-    //console.log(req.body);
+    console.log(message);
     //if (!hostname) {
     //    res.status(400).send('hostname is empty');
     //} else {
