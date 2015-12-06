@@ -102,9 +102,12 @@ app.post('/send-message', function (req, res) {
         console.log('send with tracking')
     }
     $ = cheerio.load(message.html);
-    //console.log($.find('a').html());
+    $('a').each(function(i, elem) {
+        console.log($(this).text())
+    });
 
-    console.log(message);
+
+    //console.log(req.body);
     //if (!hostname) {
     //    res.status(400).send('hostname is empty');
     //} else {
