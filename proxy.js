@@ -47,7 +47,7 @@ app.get('/', function (req, res) {
 app.get('/tracking-image/:email', function (req, res) {
     console.log('mail ' + req.params.email + ' was open');
     if(req.query.t){
-        r.table(req.query.t).insert({
+        r.table(req.query.t + '_logs').insert({
             status: 'success',
             head: 'open',
             Recipient: req.params.email
