@@ -95,12 +95,12 @@ app.post('/send-test', function (req, res) {
 
 var addClickTracking = function (domain, html, cb) {
     $ = cheerio.load(html);
-    $('a').each(function(i, elem) {
+    var newHtml = $('a').each(function(i, elem) {
 
-        $(this).attr('href','new value')
+        elem.attr('href','new value')
 
     });
-    cb($.html())
+    cb(newHtml.html())
 
 }
 
