@@ -99,7 +99,9 @@ var addClickTracking = function (domain, html) {
     var inputs = $('a');
 
     inputs.attr('href', function(i, href){
-        return href.replace(domain, 'foobar')
+        //var link = href.replace(domain, 'email')
+
+        return href.replace(/.+/, 'email.' + domain + '/' + href)
     });
 
     //var newHtml = $('a').each(function(i, elem) {
@@ -124,7 +126,7 @@ app.post('/send-message', function (req, res) {
         message.html = addClickTracking(hostname, message.html),0
 
     }
-    console.log(1, message.html )
+    console.log(1, message.html );
 
 
     //console.log(req.body);
