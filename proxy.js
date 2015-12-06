@@ -180,11 +180,11 @@ async.waterfall([
     },
     function createTable(connection, callback) {
         //Create the table if needed.
-        r.tableList().contains('nocampaign').do(function (containsTable) {
+        r.tableList().contains('nocampaign_logs').do(function (containsTable) {
             return r.branch(
                 containsTable,
                 {created: 0},
-                r.tableCreate('nocampaign')
+                r.tableCreate('nocampaign_logs')
             );
         }).run(connection, function (err) {
             callback(err, connection);
@@ -192,11 +192,11 @@ async.waterfall([
     },
     function createIndex(connection, callback) {
         //Create the index if needed.
-        r.table('nocampaign').indexList().contains('createdAt').do(function (hasIndex) {
+        r.table('nocampaign_logs').indexList().contains('createdAt').do(function (hasIndex) {
             return r.branch(
                 hasIndex,
                 {created: 0},
-                r.table('nocampaign').indexCreate('createdAt')
+                r.table('nocampaign_logs').indexCreate('createdAt')
             );
         }).run(connection, function (err) {
             callback(err, connection);
@@ -204,7 +204,7 @@ async.waterfall([
     },
     function waitForIndex(connection, callback) {
         //Wait for the index to be ready.
-        r.table('nocampaign').indexWait('createdAt').run(connection, function (err, result) {
+        r.table('nocampaign_logs').indexWait('createdAt').run(connection, function (err, result) {
             callback(err, connection);
         });
     }
