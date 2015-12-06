@@ -50,7 +50,8 @@ app.get('/tracking-image/:email', function (req, res) {
         r.table(req.query.t + '_logs').insert({
             status: 'success',
             head: 'open',
-            Recipient: req.params.email
+            Recipient: req.params.email,
+            createdAt: new Date()
         }).run(app._rdbConn);
     }
 

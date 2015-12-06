@@ -122,14 +122,16 @@ var sendEmail = function (hostname, message, conn) {
                 status: 'error',
                 head: err.toString(),
                 Recipient: message.to,
-                content: JSON.parse(JSON.stringify(err))
+                content: JSON.parse(JSON.stringify(err)),
+                createdAt: new Date()
             }).run(conn);
             deferred.reject(err);
         } else {
             r.table('nocampaign_logs').insert({
                 status: 'success',
                 head: 'delivered',
-                Recipient: message.to
+                Recipient: message.to,
+                createdAt: new Date()
             }).run(conn);
             deferred.resolve(hostname);
         }
