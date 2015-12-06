@@ -10,6 +10,7 @@ var htmlToText = require('nodemailer-html-to-text').htmlToText;
 var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
 var compileString = require(__dirname + '/compile-string');
+var r = require('rethinkdb');
 
 var dkimKeySelector = 'mail';
 
