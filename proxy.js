@@ -93,6 +93,17 @@ app.post('/send-test', function (req, res) {
 
 });
 
+var addClickTracking = function (domain, html, cb) {
+    $ = cheerio.load(html);
+    $('a').each(function(i, elem) {
+
+        $(this).attr('href','new value')
+
+    });
+    cb($.html())
+
+}
+
 app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
@@ -101,10 +112,16 @@ app.post('/send-message', function (req, res) {
         message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '?t=nocampaign_logs"/>';
         console.log('send with tracking')
     }
-    $ = cheerio.load(message.html);
-    $('a').each(function(i, elem) {
-        console.log($(this).attr('href'))
-    });
+
+    if(message['c:tracking']){
+        addClickTracking(hostname, message.html, function (message, err) {
+            if(err){
+                res.end(err);
+            } else {
+                console.log(message)
+            }
+        })
+    }
 
 
     //console.log(req.body);
