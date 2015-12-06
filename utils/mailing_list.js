@@ -148,7 +148,7 @@ function sendFunc(data, cb) {
             subject: compileString(data.letter.subject, data.recipient.vars),
             html: compileString(data.letter.html, data.recipient.vars)
         };
-        if(data['o:tracking']){
+        if(data.letter['o:tracking']){
             message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + data.recipient.address + '?t=' +
                 data.logList + '"/>'
         }
