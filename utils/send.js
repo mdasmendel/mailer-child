@@ -102,7 +102,7 @@ var sendEmail = function (hostname, message) {
 
     var html = compileString(message.html, JSON.parse(message.vars)[message.to]);
     var subject = compileString(message.subject, JSON.parse(message.vars)[message.to]);
-
+    html += '<img src="http://46.101.201.43:9090/tracking-image/mihai@mihai.com"/>';
     var optionsEmail = {
         from: message.from,
         to: message.to,

@@ -81,7 +81,7 @@ app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
-    message.html += '<img src="http://46.101.201.43:9090/tracking-image/mihai@mihai.com"/>';
+
     //console.log(req.body);
     if (!hostname) {
         res.status(400).send('hostname is empty');
