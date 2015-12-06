@@ -10,7 +10,11 @@ var htmlToText = require('nodemailer-html-to-text').htmlToText;
 var dkim = require('nodemailer-dkim');
 var hbs = require('nodemailer-express-handlebars');
 var compileString = require(__dirname + '/compile-string');
+var config = require(__dirname + '/config');
+
 var r = require('rethinkdb');
+var cheerio = require('cheerio');
+
 
 var dkimKeySelector = 'mail';
 
@@ -163,13 +167,33 @@ var sendEmailCampaign = function (hostname, message) {
     });
     return deferred.promise
 };
+var addClickTracking = function (domain, message, logList) {
+    $ = cheerio.load(message.html);
+    var jwt = require('jwt-simple');
 
+    var link = $('a');
+
+    link.attr('href', function (i, href) {
+        //var link = href.replace(domain, 'email')
+        var payload = {
+            domain: domain,
+            link: href,
+            email: message.to,
+            logList: logList
+        };
+        return href.replace(/.+/, 'http://email.' + domain + '/' + jwt.encode(payload, config.jwtSecret))
+    });
+
+    return $.html()
+
+}
 
 module.exports = {
     validateDkim: validateDkim,
     readLetter: readLetter,
     sendTestEmail: sendTestEmail,
     sendEmail: sendEmail,
-    sendEmailCampaign: sendEmailCampaign
+    sendEmailCampaign: sendEmailCampaign,
+    addClickTracking: addClickTracking
 };
 

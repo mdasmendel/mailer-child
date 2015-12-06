@@ -152,6 +152,9 @@ function sendFunc(data, cb) {
             message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + data.recipient.address + '?t=' +
                 data.logList + '"/>'
         }
+        if(data.letter['o:tracking']){
+            message.html += send.addClickTracking(data.hostname, message, data.logList)
+        }
         console.log(data.recipient.address);
 
         send.sendEmailCampaign(data.hostname, message)

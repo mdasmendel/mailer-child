@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var config = require(__dirname + '/utils/config');
 var send = require(__dirname + '/utils/send');
 var async = require('async');
-var cheerio = require('cheerio');
 var r = require('rethinkdb');
 var dbConfig = require(__dirname + '/utils/db_config.js');
 var mailingListApi = require(__dirname + '/utils/mailing_list.js');
@@ -67,8 +66,6 @@ app.get('/tracking-image/:email', function (req, res) {
 
 app.post('/tracking-clicks', function (req, res) {
 
-    console.log('click');
-    console.log(req.body);
 
     if (req.body.logList) {
         r.table(req.body.logList).insert({
@@ -112,26 +109,7 @@ app.post('/send-test', function (req, res) {
 });
 
 
-var addClickTracking = function (domain, message, logList) {
-    $ = cheerio.load(message.html);
-    var jwt = require('jwt-simple');
 
-    var inputs = $('a');
-
-    inputs.attr('href', function (i, href) {
-        //var link = href.replace(domain, 'email')
-        var payload = {
-            domain: domain,
-            link: href,
-            email: message.to,
-            logList: logList
-        };
-        return href.replace(/.+/, 'http://email.' + domain + '/' + jwt.encode(payload, config.jwtSecret))
-    });
-
-    return $.html()
-
-}
 
 app.post('/send-message', function (req, res) {
     var hostname = req.body.hostname;
@@ -143,8 +121,7 @@ app.post('/send-message', function (req, res) {
     }
 
     if (message['c:tracking']) {
-        message.html = addClickTracking(hostname, message, 'nocampaign_logs')
-
+        message.html = send.addClickTracking(hostname, message, 'nocampaign_logs')
     }
     console.log(1, message.html);
 
