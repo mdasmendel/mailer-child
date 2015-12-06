@@ -93,7 +93,7 @@ app.post('/send-test', function (req, res) {
 
 });
 
-var addClickTracking = function (domain, html, cb) {
+var addClickTracking = function (domain, html) {
     $ = cheerio.load(html);
 
     var inputs = $('a');
@@ -107,7 +107,7 @@ var addClickTracking = function (domain, html, cb) {
     //    $(this).attr('href','new value')
     //
     //});
-    cb($.html())
+    return $.html()
 
 }
 
@@ -121,14 +121,10 @@ app.post('/send-message', function (req, res) {
     }
 
     if(message['c:tracking']){
-        addClickTracking(hostname, message.html, function (message, err) {
-            if(err){
-                res.end(err);
-            } else {
-                console.log(1, message)
-            }
-        })
+        message.html = addClickTracking(hostname, message.html),0
+
     }
+    console.log(1, message.html )
 
 
     //console.log(req.body);
