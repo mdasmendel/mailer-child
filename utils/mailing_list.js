@@ -140,48 +140,36 @@ function getLogsByList(req, res, next) {
 }
 
 function sendFunc(data, cb) {
-    var start = new Date().getTime();
-    var message = {
-        from: data.letter.from,
-        to: data.recipient.address,
-        subject: compileString(data.letter.subject, data.recipient.vars),
-        html: compileString(data.letter.html, data.recipient.vars)
-    };
-    console.log(data.recipient.address);
-    send.sendEmailCampaign(data.hostname, message)
-        .then(function () {
-            r.table(data.logList).insert({
-                status: 'success',
-                head: 'Delivered',
-                Recipient: data.recipient.address
-            }).run(data.conn);
-            var end = new Date().getTime();
-            if(end - start < 60000){
-                console.log('waite ' + (end - start))
-                setTimeout(function(){
-                    cb()
-                }, end - start)
-            } else {
-                cb()
-            }
 
-        }, function (err) {
-            r.table(data.logList).insert({
-                status: 'error',
-                head: err.toString(),
-                Recipient: data.recipient.address,
-                content: JSON.parse(JSON.stringify(err))
-            }).run(data.conn);
-            var end = new Date().getTime();
-            if(end - start < 60000){
-                console.log('waite ' + (end - start));
-                setTimeout(function(){
-                    cb()
-                }, end - start)
-            } else {
+    setTimeout(function () {
+        var message = {
+            from: data.letter.from,
+            to: data.recipient.address,
+            subject: compileString(data.letter.subject, data.recipient.vars),
+            html: compileString(data.letter.html, data.recipient.vars)
+        };
+        console.log(data.recipient.address);
+
+        send.sendEmailCampaign(data.hostname, message)
+            .then(function () {
+                r.table(data.logList).insert({
+                    status: 'success',
+                    head: 'Delivered',
+                    Recipient: data.recipient.address
+                }).run(data.conn);
                 cb()
-            }
-        })
+            }, function (err) {
+                r.table(data.logList).insert({
+                    status: 'error',
+                    head: err.toString(),
+                    Recipient: data.recipient.address,
+                    content: JSON.parse(JSON.stringify(err))
+                }).run(data.conn);
+                cb()
+            })
+    }, Math.floor(Math.random() * 60000));
+
+
 }
 
 function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
