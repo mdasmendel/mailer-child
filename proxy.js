@@ -47,7 +47,7 @@ app.get('/', function (req, res) {
 app.get('/tracking-image/:email', function (req, res) {
     console.log('mail ' + req.params.email + ' was open');
     if(req.query.t){
-        r.table(req.query.t + '_logs').insert({
+        r.table(req.query.t).insert({
             status: 'success',
             head: 'open',
             Recipient: req.params.email,
@@ -97,7 +97,7 @@ app.post('/send-message', function (req, res) {
     var checkDkim = req.body.checkDkim;
     var message = req.body.message;
     if(message['o:tracking']){
-        message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '?t=nocampaign"/>';
+        message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + message.to + '?t=nocampaign_logs"/>';
         console.log('send with tracking')
     }
 

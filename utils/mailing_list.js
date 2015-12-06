@@ -24,7 +24,7 @@ function addMember(members, list, connn, cb) {
                     list = null;
                     connn = null;
                 } else {
-                    setTimeout(function () {
+                    process.nextTick(function () {
                         console.log('remain: ', members.length);
                         addMember(members, list, connn, cb);
                         member = null;
@@ -148,6 +148,10 @@ function sendFunc(data, cb) {
             subject: compileString(data.letter.subject, data.recipient.vars),
             html: compileString(data.letter.html, data.recipient.vars)
         };
+        if(data['o:tracking']){
+            message.html += '<img src="http://46.101.201.43:9090/tracking-image/' + data.recipient.address + '?t=' +
+                data.logList + '"/>'
+        }
         console.log(data.recipient.address);
 
         send.sendEmailCampaign(data.hostname, message)
@@ -155,7 +159,8 @@ function sendFunc(data, cb) {
                 r.table(data.logList).insert({
                     status: 'success',
                     head: 'Delivered',
-                    Recipient: data.recipient.address
+                    Recipient: data.recipient.address,
+                    createdAt: new Date()
                 }).run(data.conn);
                 cb()
             }, function (err) {
@@ -163,7 +168,8 @@ function sendFunc(data, cb) {
                     status: 'error',
                     head: err.toString(),
                     Recipient: data.recipient.address,
-                    content: JSON.parse(JSON.stringify(err))
+                    content: JSON.parse(JSON.stringify(err)),
+                    createdAt: new Date()
                 }).run(data.conn);
                 cb()
             })
@@ -172,48 +178,50 @@ function sendFunc(data, cb) {
 
 }
 
-function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
-    if (recipients.length === 0) {
-        cb()
-    } else {
-        var recipient = recipients[0];
-        recipients.splice(0, 1);
-        console.log(recipient);
-        var message = {
-            from: letter.from,
-            to: recipient.address,
-            subject: compileString(letter.subject, recipient.vars),
-            html: compileString(letter.html, recipient.vars)
-        };
-        send.sendEmailCampaign(hostname, message)
-            .then(function () {
-                r.table(logList).insert({
-                    status: 'success',
-                    head: 'Delivered',
-                    Recipient: recipient.address
-                }).run(conn);
-                setTimeout(function () {
-                    nextReecipient(recipients, letter, hostname, logList, conn, cb);
-                    recipients = null;
-                    letter = null;
-                }, 500)
-            }, function (err) {
-                r.table(logList).insert({
-                    status: 'error',
-                    head: err.toString(),
-                    Recipient: recipient.address,
-                    content: JSON.parse(JSON.stringify(err))
-                }).run(conn);
-
-
-                setTimeout(function () {
-                    nextReecipient(recipients, letter, hostname, logList, conn, cb);
-                    recipients = null;
-                    letter = null;
-                }, 500)
-            })
-    }
-}
+//function nextReecipient(recipients, letter, hostname, logList, conn, cb) {
+//    if (recipients.length === 0) {
+//        cb()
+//    } else {
+//        var recipient = recipients[0];
+//        recipients.splice(0, 1);
+//        console.log(recipient);
+//        var message = {
+//            from: letter.from,
+//            to: recipient.address,
+//            subject: compileString(letter.subject, recipient.vars),
+//            html: compileString(letter.html, recipient.vars)
+//        };
+//        send.sendEmailCampaign(hostname, message)
+//            .then(function () {
+//                r.table(logList).insert({
+//                    status: 'success',
+//                    head: 'Delivered',
+//                    Recipient: recipient.address,
+//                    createdAt: new Date()
+//                }).run(conn);
+//                setTimeout(function () {
+//                    nextReecipient(recipients, letter, hostname, logList, conn, cb);
+//                    recipients = null;
+//                    letter = null;
+//                }, 500)
+//            }, function (err) {
+//                r.table(logList).insert({
+//                    status: 'error',
+//                    head: err.toString(),
+//                    Recipient: recipient.address,
+//                    content: JSON.parse(JSON.stringify(err)),
+//                    createdAt: new Date()
+//                }).run(conn);
+//
+//
+//                setTimeout(function () {
+//                    nextReecipient(recipients, letter, hostname, logList, conn, cb);
+//                    recipients = null;
+//                    letter = null;
+//                }, 500)
+//            })
+//    }
+//}
 
 function creteLogList(name, conn) {
     var deferred = Q.defer();
@@ -258,7 +266,8 @@ function sendCampaign(req, res, next) {
                             letter: letter,
                             hostname: hostname,
                             logList: logList,
-                            conn: req.app._rdbConn
+                            conn: req.app._rdbConn,
+                            'o:tracking': req.body['o:tracking']
                         })
                     }
                     //nextReecipient(results, letter, hostname, logList, req.app._rdbConn, function (error) {
