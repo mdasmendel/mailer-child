@@ -95,12 +95,19 @@ app.post('/send-test', function (req, res) {
 
 var addClickTracking = function (domain, html, cb) {
     $ = cheerio.load(html);
-    var newHtml = $('a').each(function(i, elem) {
 
-        $(this).attr('href','new value')
+    var inputs = $('a');
 
+    inputs.attr('href', function(i, href){
+        return href.replace(domain, 'foobar')
     });
-    cb(newHtml.html())
+
+    //var newHtml = $('a').each(function(i, elem) {
+    //
+    //    $(this).attr('href','new value')
+    //
+    //});
+    cb($.html())
 
 }
 
@@ -118,7 +125,7 @@ app.post('/send-message', function (req, res) {
             if(err){
                 res.end(err);
             } else {
-                console.log(message)
+                console.log(1, message)
             }
         })
     }
