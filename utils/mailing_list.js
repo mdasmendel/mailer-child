@@ -125,7 +125,9 @@ function getMembers(req, res, next) {
 }
 
 function getLogsByList(req, res, next) {
-    r.table(req.params.listName + '_logs').run(req.app._rdbConn, function (err, cursor) {
+    var skip = parseInt(req.query.skip) || 0;
+    var limit = parseInt(req.query.limit) || 100;
+    r.table(req.params.listName + '_logs').skip(skip).limit(limit).run(req.app._rdbConn, function (err, cursor) {
         if (err) {
             return next(err);
         }
