@@ -15,6 +15,7 @@ var app = express();
 
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 
 app.use(function (req, res, next) {
