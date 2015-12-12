@@ -106,7 +106,9 @@ function createList(req, res, next) {
  * Get items.
  */
 function getMembers(req, res, next) {
-    r.table(req.params.listName).run(req.app._rdbConn, function (err, cursor) {
+    var skip = req.query.skip || 0;
+    var limit = req.query.limit || 100;
+    r.table(req.params.listName).skip(skip).limit(limit).run(req.app._rdbConn, function (err, cursor) {
         if (err) {
             return next(err);
         }
